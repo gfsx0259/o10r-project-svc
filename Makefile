@@ -10,8 +10,6 @@ $(eval $(RUN_ARGS):;@:)
 export UID=$(shell id -u)
 export GID=$(shell id -g)
 
-export COMPOSE_PROJECT_NAME=${STACK_NAME}
-
 up: ## Up the dev environment.
 	docker compose -f docker/compose.yml -f docker/compose.dev.yml up -d --remove-orphans
 
