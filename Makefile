@@ -1,10 +1,7 @@
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := up
 
 # Run silent.
 MAKEFLAGS += --silent
-
-RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-$(eval $(RUN_ARGS):;@:)
 
 # Current user ID and group ID.
 export UID=$(shell id -u)
