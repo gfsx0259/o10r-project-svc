@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use App\Controller\IndexController;
+use App\Controller\MethodController;
+use App\Controller\ProjectController;
+use App\Middleware\SessionMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
 use Yiisoft\Router\Group;
@@ -15,6 +18,28 @@ return [
     Route::get('/')
         ->action([IndexController::class, 'index'])
         ->name('app/index'),
+
+    Route::get('/project')
+        ->middleware(SessionMiddleware::class)
+        ->action([ProjectController::class, 'getProjects']),
+
+    Route::post('/project')
+        ->action([ProjectController::class, 'createProjects']),
+
+    Route::get('/project/{projectId}/method')
+        ->action([ProjectController::class, 'getMethods']),
+
+    Route::put('/project/{projectId}/method')
+        ->action([ProjectController::class, 'saveMethods']),
+
+    Route::get('/project/{projectId}/setting')
+        ->action([ProjectController::class, 'getSettings']),
+
+    Route::patch('/project/{projectId}/setting')
+        ->action([ProjectController::class, 'updateSettings']),
+
+    Route::get('/method')
+        ->action([MethodController::class, 'index']),
 
     Group::create('/docs')
         ->routes(

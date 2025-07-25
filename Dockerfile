@@ -12,8 +12,9 @@ RUN <<SH
     adduser -u ${UID} -D -S -G www-data www-data
 
     # Set volume permissions.
-    mkdir -p /data /config /app/runtime && \
-    chown -R www-data:www-data /data /config /app/runtime
+    mkdir -p /data /config /project/runtime && \
+    chown -R www-data:www-data /data /config /project/runtime
+
 
     # Install extra packages.
     apk add --no-cache \
@@ -27,7 +28,9 @@ RUN <<SH
     php-frankenphp-8.3-xml \
     php-frankenphp-8.3-xmlwriter \
     php-frankenphp-8.3-simplexml \
-    php-frankenphp-8.3-pdo
+    php-frankenphp-8.3-pdo \
+    php-frankenphp-8.3-pdo_mysql \
+    php-frankenphp-8.3-mysqlnd
 SH
 
 FROM base AS prod-builder

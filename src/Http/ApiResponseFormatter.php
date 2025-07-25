@@ -9,14 +9,19 @@ use Yiisoft\DataResponse\DataResponse;
 use Yiisoft\DataResponse\DataResponseFormatterInterface;
 use Yiisoft\DataResponse\Formatter\JsonDataResponseFormatter;
 
-final class ApiResponseFormatter implements DataResponseFormatterInterface
+final readonly class ApiResponseFormatter implements DataResponseFormatterInterface
 {
-    public function __construct(private ApiResponseDataFactory $apiResponseDataFactory, private JsonDataResponseFormatter $jsonDataResponseFormatter)
-    {
-    }
+    public function __construct(
+        private ApiResponseDataFactory $apiResponseDataFactory,
+        private JsonDataResponseFormatter $jsonDataResponseFormatter
+    ) {}
 
     public function format(DataResponse $dataResponse): ResponseInterface
     {
+        if (!$dataResponse->hasData()) {
+            return $dataResponse->getResponse();
+        }
+
         $response = $dataResponse->withData(
             $this->apiResponseDataFactory
                 ->createFromResponse($dataResponse)

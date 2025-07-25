@@ -17,14 +17,20 @@ export COMPOSE_PROJECT_NAME=${STACK_NAME}
 up: ## Up the dev environment.
 	docker compose -f docker/compose.yml -f docker/compose.dev.yml up -d --remove-orphans
 
+ps: ## Up the dev environment.
+	docker compose -f docker/compose.yml -f docker/compose.dev.yml ps
+
+logs:
+	docker compose -f docker/compose.yml -f docker/compose.dev.yml logs -f
+
 up-build: ## Up the dev environment rebuilding images.
-	docker compose -f docker/compose.yml -f docker/compose.dev.yml up -d --remove-orphans --build
+	docker compose -f docker/compose.yml -f docker/compose.dev.yml build --no-cache
 
 down: ## Down the dev environment.
 	docker compose -f docker/compose.yml -f docker/compose.dev.yml down --remove-orphans
 
 exec: ## Run a command within the existing container.
-	docker compose -f docker/compose.yml -f docker/compose.dev.yml exec app $(CMD) $(RUN_ARGS)
+	docker compose -f docker/compose.yml -f docker/compose.dev.yml exec project $(CMD) $(RUN_ARGS)
 
 run: ## Run a command within a temporary container.
 	docker compose -f docker/compose.yml -f docker/compose.dev.yml run --rm --entrypoint $(CMD) app $(RUN_ARGS)

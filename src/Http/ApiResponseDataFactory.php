@@ -12,7 +12,7 @@ final class ApiResponseDataFactory
 {
     public function createFromResponse(DataResponse $response): ApiResponseData
     {
-        if ($response->getStatusCode() !== Status::OK) {
+        if (!in_array($response->getStatusCode(), [Status::OK, Status::CREATED, Status::NO_CONTENT], true)) {
             return $this
                 ->createErrorResponse()
                 ->setErrorCode($response->getStatusCode())

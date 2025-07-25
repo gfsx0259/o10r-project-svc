@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
+use Cycle\Database\Config\MySQL\TcpConnectionConfig;
+use Cycle\Database\Config\MySQLDriverConfig;
+use Cycle\Schema\Provider\FromFilesSchemaProvider;
+use Cycle\Schema\Provider\SimpleCacheSchemaProvider;
 use Yiisoft\Assets\AssetManager;
 use Yiisoft\Definitions\Reference;
+use Yiisoft\Yii\Cycle\Schema\Provider\FromConveyorSchemaProvider;
 
 return [
     'supportEmail' => 'support@example.com',
@@ -40,6 +45,66 @@ return [
     'yiisoft/yii-swagger' => [
         'annotation-paths' => [
             '@src',
+        ],
+    ],
+
+
+    // Общий конфиг Cycle
+    'yiisoft/yii-cycle' => [
+        // Конфиг Cycle DBAL
+        'dbal' => [
+            // PSR-3 совместимый логгер SQL запросов
+            'query-logger' => null,
+            // БД по умолчанию (из списка 'databases')
+            'default' => 'default',
+            'aliases' => [],
+            'databases' => [
+                'default' => ['connection' => 'project']
+            ],
+            'connections' => [
+                // Пример настроек подключения к SQLite:
+                'project' => new MySQLDriverConfig(
+                    connection: new TcpConnectionConfig(
+                        database: $_ENV['PP_DB_NAME'],
+                        host: $_ENV['PP_DB_HOST'],
+                        port: (int)$_ENV['PP_DB_PORT'],
+                        user: $_ENV['PP_DB_USER'],
+                        password: $_ENV['PP_DB_PASSWORD'],
+                    )
+                ),
+            ],
+        ],
+
+        // Конфиг миграций
+        'migrations' => [
+            'directory' => '@root/migrations',
+            'namespace' => 'App\\Migration',
+            'table' => 'migration',
+            'safe' => false,
+        ],
+
+        /**
+         * Поставщики схемы реализуют класс {@see SchemaProviderInterface}.
+         * Конфигурируется перечислением имён классов поставщиков. Вы здесь можете конфигурировать также и поставщиков,
+         * указывая имя класса поставщика в качестве ключа элемента, а конфиг в виде массива элемента:
+         */
+        'schema-providers' => [
+            SimpleCacheSchemaProvider::class => SimpleCacheSchemaProvider::config(
+                key: 'my-custom-cache-key'
+            ),
+            FromFilesSchemaProvider::class => FromFilesSchemaProvider::config(
+                files: ['@runtime/cycle-schema.php'],
+            ),
+            FromConveyorSchemaProvider::class,
+        ],
+
+        /**
+         * Настройка для класса {@see \Yiisoft\Yii\Cycle\Schema\Conveyor\MetadataSchemaConveyor}.
+         * Здесь указывается список папок с сущностями.
+         * В путях поддерживаются псевдонимы {@see \Yiisoft\Aliases\Aliases}.
+         */
+        'entity-paths' => [
+            '@src/Entity'
         ],
     ],
 ];

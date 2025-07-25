@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Exception\ApplicationException;
+use Ory\Client\ApiException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -15,9 +16,9 @@ use Yiisoft\Input\Http\InputValidationException;
 
 final class ExceptionMiddleware implements MiddlewareInterface
 {
-    public function __construct(private DataResponseFactoryInterface $dataResponseFactory)
-    {
-    }
+    public function __construct(
+        private DataResponseFactoryInterface $dataResponseFactory
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -29,6 +30,11 @@ final class ExceptionMiddleware implements MiddlewareInterface
             return $this->dataResponseFactory->createResponse(
                 $e->getResult()->getErrorMessages()[0],
                 Status::BAD_REQUEST
+            );
+        } catch (ApiException $e) {
+            return $this->dataResponseFactory->createResponse(
+                $e->getMessage(),
+                Status::FORBIDDEN
             );
         }
     }
