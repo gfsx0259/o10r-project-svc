@@ -6,8 +6,6 @@ MAKEFLAGS += --silent
 RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(RUN_ARGS):;@:)
 
-include docker/.env
-
 # Current user ID and group ID.
 export UID=$(shell id -u)
 export GID=$(shell id -g)
