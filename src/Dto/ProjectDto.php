@@ -13,6 +13,8 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'code', type: 'string', example: 'funny-goose'),
         new OA\Property(property: 'secret_key', type: 'string', example: 'abc123xyz'),
         new OA\Property(property: 'is_sandbox', type: 'integer', example: 0),
+        new OA\Property(property: 'methods', type: 'array', example: [1, 2, 3]),
+        new OA\Property(property: 'settings', type: 'array', example: [1, 2, 3]),
     ],
     type: 'object'
 )]
@@ -23,5 +25,7 @@ final readonly class ProjectDto
         public string $code,
         public string $secret_key,
         public int $is_sandbox,
+        public array $methods,
+        public array $settings,
     ) {}
 }

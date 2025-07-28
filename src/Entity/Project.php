@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\ProjectRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\Annotated\Annotation\Relation\ManyToMany;
 
 #[Entity(repository: ProjectRepository::class, table: 'project', readonlySchema: true)]
@@ -29,10 +30,21 @@ class Project
         innerKey: 'id',
         outerKey: 'id',
         throughInnerKey: 'project_id',
-        throughOuterKey: 'method_id'
+        throughOuterKey: 'method_id',
     )]
     private array $methods = [];
 
+    #[HasMany(
+        target: ProjectSetting::class,
+        innerKey: 'id',
+        outerKey: 'project_id',
+    )]
+    private array $settings = [];
+
+    public function getSettings(): array
+    {
+        return $this->settings;
+    }
 
     public function getId(): int
     {

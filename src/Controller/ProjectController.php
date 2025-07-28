@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Dto\ProjectDtoAssembler;
 use App\Dto\SettingDtoAssembler;
+use App\Entity\Project;
 use App\Entity\ProjectMethod;
 use App\Repository\ProjectMethodRepository;
 use App\Repository\ProjectRepository;
@@ -83,9 +84,20 @@ final readonly class ProjectController
     ): ResponseInterface {
         $userId = $requestProvider->get()->getAttribute('session')->getIdentity()->getId();
 
-        $projects = $this->projectRepository->findByUserId($userId);
+        // TODO Use separate table for project <-> user
+        $projectsByUser = $this->projectRepository->findByUserId($userId);
+        $projectIds = array_map(fn (Project $project) => $project->getId(), $projectsByUser);
 
-        return $responseFactory->createResponse(array_map([$this->projectDtoAssembler, 'assemble'], $projects));
+        $projectsDto = [];
+
+        foreach ($projectIds as $projectId) {
+            $projectsDto[] = $this->projectDtoAssembler->assemble(
+                $this->projectRepository->getById($projectId),
+                explode(',', $requestProvider->get()->getQueryParams()['include'] ?? '')
+            );
+        }
+
+        return $responseFactory->createResponse($projectsDto);
     }
 
     #[OA\Post(
