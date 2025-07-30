@@ -10,6 +10,9 @@ services:
     environment:
       SERVER_NAME: ":80"
       DEV_PORT: 80
+    depends_on:
+      project-db:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - dev-o10r-network
