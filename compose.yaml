@@ -12,7 +12,7 @@ services:
       DEV_PORT: 80
     restart: unless-stopped
     networks:
-      - dev-ecommpay-pp-network
+      - dev-o10r-network
     labels:
       - traefik.enable=true
       - traefik.http.routers.project_https.rule=Host(`project.o10r.io`)
@@ -26,7 +26,6 @@ services:
       - ./xdebug.ini:/etc/php/conf.d/xdebug-enable.ini
     tty: true
   project-db:
-    container_name: dev-ecommpay-pp-project-db
     restart: unless-stopped
     image: mysql:8.0
     environment:
@@ -43,7 +42,7 @@ services:
       timeout: 5s
       retries: 55
     networks:
-      - dev-ecommpay-pp-network
+      - dev-o10r-network
   project-migrate:
       build:
         target: dev
@@ -62,7 +61,7 @@ services:
               condition: service_healthy
       entrypoint: php yii migrate:up -q
       networks:
-          - dev-ecommpay-pp-network
+          - dev-o10r-network
 
 volumes:
   ppDatabase:
@@ -70,6 +69,6 @@ volumes:
   caddy_config:
 
 networks:
-  dev-ecommpay-pp-network:
-   name: dev-ecommpay-pp-network
+  dev-o10r-network:
+   name: dev-o10r-network
    external: true

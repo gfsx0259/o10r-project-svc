@@ -35,3 +35,5 @@ c3.php
 tests/Support/Data/database.db_snapshot
 
 /.env
+
+.env
