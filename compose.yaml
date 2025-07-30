@@ -24,11 +24,6 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./xdebug.ini:/etc/php/conf.d/xdebug-enable.ini
-    healthcheck:
-        test: [ "CMD-SHELL", "[ -f /app/vendor/autoload.php ] || exit 1" ]
-        interval: 5s
-        retries: 20
-        start_period: 5s
     tty: true
   project-db:
     restart: unless-stopped
@@ -48,27 +43,6 @@ services:
       retries: 55
     networks:
       - dev-o10r-network
-  project-migrate:
-      build:
-        target: dev
-        args:
-          UID: ${UID:-1000}
-          GID: ${GID:-1000}
-      env_file:
-          - .env
-      environment:
-        YII_ENV: prod
-        YII_DEBUG: false
-      volumes:
-          - ./:/app
-      depends_on:
-          project-db:
-              condition: service_healthy
-          project:
-              condition: service_healthy
-      entrypoint: php yii migrate:up -q
-      networks:
-          - dev-o10r-network
 
 volumes:
   ppDatabase:

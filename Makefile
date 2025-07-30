@@ -4,22 +4,16 @@
 export UID=$(shell id -u)
 export GID=$(shell id -g)
 
-start: env up composer
+start: env up composer migrate
 
 env:
-	cp .env.example .env
+	@if [ ! -f .env ]; then cp .env.example .env; fi
 
 up:
 	docker compose up -d --remove-orphans
 
 composer:
-	docker compose exec project composer i
+	docker compose exec project composer install
 
 migrate:
-	docker compose up project-migrate
-
-ps:
-	docker compose ps
-
-logs:
-	docker compose logs -f
+	docker compose exec project php yii migrate:up -q
