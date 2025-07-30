@@ -13,7 +13,7 @@ up:
 	docker compose up -d --remove-orphans
 
 composer:
-	composer i
+	docker compose exec project composer i
 
 migrate:
 	docker compose up project-migrate
