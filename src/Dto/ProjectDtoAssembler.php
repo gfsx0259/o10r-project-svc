@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Collection\ProjectMethodCollection;
+use App\Collection\ProjectSettingCollection;
 use App\Entity\Project;
 use App\Entity\ProjectSetting;
 use App\Repository\ProjectSettingRepository;
@@ -16,8 +18,8 @@ final readonly class ProjectDtoAssembler
 
     public function assemble(Project $project, array $includes = []): ProjectDto
     {
-        $methods = in_array(self::INCLUDE_METHOD_KEY, $includes) ? $project->getMethods() : [];
-        $settings = in_array(self::INCLUDE_SETTING_KEY, $includes) ? $project->getSettings() : [];
+        $methods = in_array(self::INCLUDE_METHOD_KEY, $includes) ? $project->getMethods() : new ProjectMethodCollection();
+        $settings = in_array(self::INCLUDE_SETTING_KEY, $includes) ? $project->getSettings() : new ProjectSettingCollection();
 
         return new ProjectDto(
             $project->getId(),
