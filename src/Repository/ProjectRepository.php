@@ -5,13 +5,28 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Project;
+use App\Exception\NotFoundException;
 use Cycle\ORM\Select\Repository;
 
 final class ProjectRepository extends Repository
 {
-    public function getById(int $id, array $includes = []): Project
+    public function getById(int $id): Project
     {
         return $this->findByPK($id);
+    }
+
+    /**
+     * @param string $hash
+     * @return Project
+     * @throws NotFoundException
+     */
+    public function getByHash(string $hash): Project
+    {
+        if (!$project = $this->findOne(['hash' => $hash])) {
+            throw new NotFoundException();
+        }
+
+        return $project;
     }
 
     public function findByUserId(string $userId): array

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controller\AggregationController;
 use App\Controller\IndexController;
 use App\Controller\MethodController;
 use App\Controller\ProjectController;
@@ -37,6 +38,9 @@ return [
 
     Route::patch('/project/{projectId}/setting')
         ->action([ProjectController::class, 'updateSettings']),
+
+    Route::get('/aggregation/payment-page/{projectHash}')
+        ->action([AggregationController::class, 'paymentPage']),
 
     Route::get('/method')
         ->action([MethodController::class, 'index']),

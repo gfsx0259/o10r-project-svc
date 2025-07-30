@@ -44,6 +44,21 @@ services:
       retries: 55
     networks:
       - dev-ecommpay-pp-network
+  project-migrate:
+      build: .
+      env_file:
+          - .env
+      environment:
+        YII_ENV: prod
+        YII_DEBUG: false
+      volumes:
+          - ./:/app
+      depends_on:
+          project-db:
+              condition: service_healthy
+      entrypoint: php yii migrate:up -q
+      networks:
+          - dev-ecommpay-pp-network
 
 volumes:
   ppDatabase:

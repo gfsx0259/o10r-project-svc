@@ -28,6 +28,7 @@ final readonly class ProjectService
         $project = new Project();
         $project->setUserId($userId);
         $project->setSecretKey(uniqid());
+        $project->setHash(uniqid(more_entropy: true));
         $project->setCode($this->codeGenerator->getName());
         $project->setIsSandbox((int)$isSandbox);
 

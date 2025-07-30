@@ -106,5 +106,16 @@ return [
         'entity-paths' => [
             '@src/Entity'
         ],
+
+        'collections' => [
+            /** Default factory (class or name from the `factories` list below) or {@see null} */
+            'default' => 'doctrine',
+            /** List of class names that implement {@see \Cycle\ORM\Collection\CollectionFactoryInterface} */
+            'factories' => [
+                'array' => Cycle\ORM\Collection\ArrayCollectionFactory::class,
+                'doctrine' => \Cycle\ORM\Collection\DoctrineCollectionFactory::class,
+                // 'illuminate' => \Cycle\ORM\Collection\IlluminateCollectionFactory::class,
+            ],
+        ],
     ],
 ];

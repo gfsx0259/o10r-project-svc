@@ -15,7 +15,6 @@ RUN <<SH
     mkdir -p /data /config /project/runtime && \
     chown -R www-data:www-data /data /config /project/runtime
 
-
     # Install extra packages.
     apk add --no-cache \
     php-frankenphp-8.3-opcache \
@@ -31,6 +30,8 @@ RUN <<SH
     php-frankenphp-8.3-pdo \
     php-frankenphp-8.3-pdo_mysql \
     php-frankenphp-8.3-mysqlnd
+
+    echo "variables_order=EGPCS" > /etc/php/conf.d/99-env.ini
 SH
 
 FROM base AS prod-builder

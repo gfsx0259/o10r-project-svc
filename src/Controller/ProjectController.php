@@ -35,11 +35,6 @@ use Yiisoft\Router\HydratorAttribute\RouteArgument;
     name: 'ory_kratos_session',
     in: 'cookie'
 )]
-#[OA\Schema(
-    schema: 'Method',
-    type: 'integer',
-    example: 10
-)]
 final readonly class ProjectController
 {
     public function __construct(
@@ -77,6 +72,15 @@ final readonly class ProjectController
                 )
             )
         ]
+    )]
+    #[Parameter(
+        parameter: 'include',
+        name: 'include',
+        description: 'Includes list',
+        in: 'query',
+        required: true,
+        schema: new Schema(type: 'string'),
+        example: 'method,setting',
     )]
     public function getProjects(
         RequestProviderInterface $requestProvider,

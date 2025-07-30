@@ -15,7 +15,7 @@ class OrmDefault0551ec508712b5701c7f025a60f2caf9 extends Migration
         $this->table('project_setting')
             ->addColumn('id', 'primary')
             ->addColumn('project_id', 'integer')
-            ->addColumn('code', 'tinyText')
+            ->addColumn('code', 'string')
             ->addColumn('value', 'string')
             ->addColumn('group', 'tinyInt')
             ->create();

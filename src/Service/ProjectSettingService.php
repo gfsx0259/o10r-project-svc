@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\ProjectSetting;
+use App\Repository\ProjectRepository;
 use App\Repository\ProjectSettingRepository;
 use Cycle\ORM\EntityManagerInterface;
 
@@ -13,10 +14,13 @@ final readonly class ProjectSettingService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProjectSettingRepository $projectSettingRepository,
+        private ProjectRepository $projectRepository,
     ) {}
 
     public function updateSettings(int $projectId, array $settings): void
     {
+        $project = $this->projectRepository->getById($projectId);
+
         $existedSettings = $this->projectSettingRepository->findByProjectId($projectId);
 
         foreach ($settings as $setting) {
@@ -38,6 +42,9 @@ final readonly class ProjectSettingService
                 $this->entityManager->persist($newSetting);
             }
         }
+
+        $project->setHash(uniqid(more_entropy: true));
+        $this->entityManager->persist($project);
 
         $this->entityManager->run();
     }

@@ -14,9 +14,9 @@ class OrmDefault196c43a8cc8cf109e371a546f8a5e3ed extends Migration
     {
         $this->table('method')
             ->addColumn('id', 'primary')
-            ->addColumn('code', 'tinyText')
-            ->addColumn('title', 'tinyText')
-            ->addColumn('description', 'tinyText')
+            ->addColumn('code', 'string')
+            ->addColumn('title', 'string')
+            ->addColumn('description', 'string')
             ->create();
     }
 

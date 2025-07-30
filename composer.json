@@ -33,6 +33,7 @@
     "require": {
         "php": "^8.3",
         "cebe/markdown": "^1.2@dev",
+        "doctrine/collections": "^2.3",
         "httpsoft/http-message": "^1.1",
         "ory/client": "^1.20",
         "psr/container": "^2.0",
