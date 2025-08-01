@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Controller\AggregationController;
+use App\Controller\CatalogController;
 use App\Controller\IndexController;
-use App\Controller\MethodController;
 use App\Controller\ProjectController;
 use App\Middleware\SessionMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
@@ -42,8 +42,17 @@ return [
     Route::get('/aggregation/payment-page/{projectHash}')
         ->action([AggregationController::class, 'paymentPage']),
 
-    Route::get('/method')
-        ->action([MethodController::class, 'index']),
+    Route::get('/catalog/method')
+        ->action([CatalogController::class, 'getMethods']),
+
+    Route::get('/catalog/schema')
+        ->action([CatalogController::class, 'getSchemas']),
+
+    Route::post('/catalog/schema')
+        ->action([CatalogController::class, 'createSchema']),
+
+    Route::patch('/catalog/schema/{schemaId}')
+        ->action([CatalogController::class, 'updateSchema']),
 
     Group::create('/docs')
         ->routes(
