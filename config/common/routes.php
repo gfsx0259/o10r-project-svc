@@ -54,6 +54,9 @@ return [
     Route::patch('/catalog/schema/{schemaId}')
         ->action([CatalogController::class, 'updateSchema']),
 
+    Route::delete('/catalog/schema/{schemaId}')
+        ->action([CatalogController::class, 'deleteSchema']),
+
     Group::create('/docs')
         ->routes(
             Route::get('')

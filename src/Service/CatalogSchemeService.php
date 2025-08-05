@@ -39,4 +39,11 @@ final readonly class CatalogSchemeService
 
         return $scheme;
     }
+
+    public function delete(int $id): void
+    {
+        $scheme = $this->methodFormSchemaRepository->findByPK($id);
+
+        $this->entityManager->delete($scheme)->run();
+    }
 }

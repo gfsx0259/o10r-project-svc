@@ -11,6 +11,7 @@ use App\Repository\MethodRepository;
 use App\Service\CatalogSchemeService;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Parameter;
 use OpenApi\Attributes\RequestBody;
 use OpenApi\Attributes\Schema;
 use OpenApi\Attributes\Tag;
@@ -181,7 +182,16 @@ final readonly class CatalogController
                     ]
                 )
             )
-        ]
+        ],
+    )]
+    #[Parameter(
+        parameter: 'schemaId',
+        name: 'schemaId',
+        description: 'Schema Id',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'integer'),
+        example: 11,
     )]
     public function updateSchema(
         DataResponseFactoryInterface $responseFactory,
@@ -193,6 +203,38 @@ final readonly class CatalogController
         $payload = $requestProvider->get()->getParsedBody();
 
         $catalogSchemeService->update($schemaId, $payload);
+
+        return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+    #[OA\Delete(
+        path: '/catalog/schema/{id}',
+        description: '',
+        tags: ['catalog'],
+        responses: [
+            new OA\Response(
+                response: '204',
+                description: 'Settings removed successfully',
+            )
+        ],
+    )]
+    #[Parameter(
+        parameter: 'schemaId',
+        name: 'schemaId',
+        description: 'Schema Id',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'integer'),
+        example: 11,
+    )]
+    public function deleteSchema(
+        DataResponseFactoryInterface $responseFactory,
+        CatalogSchemeService $catalogSchemeService,
+        #[RouteArgument('schemaId')]
+        int $schemaId
+    ): ResponseInterface {
+
+        $catalogSchemeService->delete($schemaId);
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
     }
