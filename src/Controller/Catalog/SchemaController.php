@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Catalog;
 
-use App\Entity\Method;
 use App\Entity\MethodFormSchema;
 use App\Repository\MethodFormSchemaRepository;
-use App\Repository\MethodRepository;
 use App\Service\CatalogSchemeService;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
@@ -22,64 +20,19 @@ use Yiisoft\RequestProvider\RequestProviderInterface;
 use Yiisoft\Router\HydratorAttribute\RouteArgument;
 
 #[Tag(
-    name: 'catalog',
+    name: 'catalog/schema',
     description: 'Catalog service API'
 )]
-final readonly class CatalogController
+final readonly class SchemaController
 {
     public function __construct(
-        private MethodRepository $methodRepository,
         private MethodFormSchemaRepository $methodFormSchemaRepository,
     ) {}
 
     #[OA\Get(
-        path: '/catalog/method',
-        description: '',
-        tags: ['catalog'],
-        responses: [
-            new OA\Response(
-                response: '200',
-                description: 'Success',
-                content: new JsonContent(
-                    allOf: [
-                        new OA\Schema(ref: '#/components/schemas/Response'),
-                        new OA\Schema(
-                            properties: [
-                                new OA\Property(
-                                    property: 'data',
-                                    type: 'array',
-                                    items: new OA\Items(
-                                        properties: [
-                                            new OA\Property(property: 'project_id', type: 'number', example: 1),
-                                            new OA\Property(property: 'project_hash', type: 'string', example: 'ertgwered'),
-                                        ],
-                                        type: 'object',
-                                    )
-                                )
-                            ]
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
-    public function getMethods(
-        DataResponseFactoryInterface $responseFactory,
-    ): ResponseInterface {
-        $methods = $this->methodRepository->findAll();
-
-        return $responseFactory->createResponse(array_map(fn (Method $method) => [
-            'id' => $method->getId(),
-            'code' => $method->getCode(),
-            'title' => $method->getTitle(),
-            'description' => $method->getDescription(),
-        ], $methods));
-    }
-
-    #[OA\Get(
         path: '/catalog/schema',
         description: '',
-        tags: ['catalog'],
+        tags: ['catalog/schema'],
         responses: [
             new OA\Response(
                 response: '200',
@@ -101,7 +54,7 @@ final readonly class CatalogController
             )
         ]
     )]
-    public function getSchemas(
+    public function read(
         DataResponseFactoryInterface $responseFactory,
     ): ResponseInterface {
         $schemas = $this->methodFormSchemaRepository->findAll();
@@ -123,7 +76,7 @@ final readonly class CatalogController
                 type: 'object',
             )
         ),
-        tags: ['catalog'],
+        tags: ['catalog/schema'],
         responses: [
             new OA\Response(
                 response: '204',
@@ -145,14 +98,14 @@ final readonly class CatalogController
             )
         ]
     )]
-    public function createSchema(
+    public function create(
         DataResponseFactoryInterface $responseFactory,
         CatalogSchemeService $catalogSchemeService,
         RequestProviderInterface $requestProvider,
     ): ResponseInterface {
         $payload = $requestProvider->get()->getParsedBody();
 
-        $schema = $catalogSchemeService->create($payload);
+        $schema = $catalogSchemeService->persist($payload);
 
         return $responseFactory->createResponse([
             'id' => $schema->getId(),
@@ -162,16 +115,16 @@ final readonly class CatalogController
     }
 
     #[OA\Patch(
-        path: '/catalog/schema/{id}',
+        path: '/catalog/schema/{schemaId}',
         description: '',
         requestBody: new RequestBody(
             required: true,
             content: new JsonContent(
-                ref: '#/components/schemas/MethodFormSchema',
+                ref: '#/components/schemas/MethodFormSchemaCreate',
                 type: 'object',
             )
         ),
-        tags: ['catalog'],
+        tags: ['catalog/schema'],
         responses: [
             new OA\Response(
                 response: '204',
@@ -193,7 +146,7 @@ final readonly class CatalogController
         schema: new Schema(type: 'integer'),
         example: 11,
     )]
-    public function updateSchema(
+    public function update(
         DataResponseFactoryInterface $responseFactory,
         CatalogSchemeService $catalogSchemeService,
         RequestProviderInterface $requestProvider,
@@ -202,15 +155,15 @@ final readonly class CatalogController
     ): ResponseInterface {
         $payload = $requestProvider->get()->getParsedBody();
 
-        $catalogSchemeService->update($schemaId, $payload);
+        $catalogSchemeService->persist(array_merge($payload, ['id' => $schemaId]));
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
     }
 
     #[OA\Delete(
-        path: '/catalog/schema/{id}',
+        path: '/catalog/schema/{schemaId}',
         description: '',
-        tags: ['catalog'],
+        tags: ['catalog/schema'],
         responses: [
             new OA\Response(
                 response: '204',
@@ -227,7 +180,7 @@ final readonly class CatalogController
         schema: new Schema(type: 'integer'),
         example: 11,
     )]
-    public function deleteSchema(
+    public function delete(
         DataResponseFactoryInterface $responseFactory,
         CatalogSchemeService $catalogSchemeService,
         #[RouteArgument('schemaId')]

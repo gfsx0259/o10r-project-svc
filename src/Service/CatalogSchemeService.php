@@ -15,27 +15,16 @@ final readonly class CatalogSchemeService
         private MethodFormSchemaRepository $methodFormSchemaRepository,
     ) {}
 
-    public function create(array $payload): MethodFormSchema
+    public function persist(array $payload): MethodFormSchema
     {
-        $scheme = new MethodFormSchema();
-        $scheme->setMethodId($payload['method_id']);
-        $scheme->setFields($payload['fields']);
-
-        $this->entityManager->persist($scheme);
-        $this->entityManager->run();
-
-        return $scheme;
-    }
-
-    public function update(int $id, array $payload): MethodFormSchema
-    {
-        $scheme = $this->methodFormSchemaRepository->findByPK($id);
+        $scheme = isset($payload['id'])
+            ? $this->methodFormSchemaRepository->findByPK($payload['id'])
+            : new MethodFormSchema();
 
         $scheme->setMethodId($payload['method_id']);
         $scheme->setFields($payload['fields']);
 
-        $this->entityManager->persist($scheme);
-        $this->entityManager->run();
+        $this->entityManager->persist($scheme)->run();
 
         return $scheme;
     }
@@ -43,7 +32,6 @@ final readonly class CatalogSchemeService
     public function delete(int $id): void
     {
         $scheme = $this->methodFormSchemaRepository->findByPK($id);
-
         $this->entityManager->delete($scheme)->run();
     }
 }

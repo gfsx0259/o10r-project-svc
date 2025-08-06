@@ -8,6 +8,7 @@ use App\Entity\ProjectSetting;
 use App\Repository\ProjectRepository;
 use App\Repository\ProjectSettingRepository;
 use Cycle\ORM\EntityManagerInterface;
+use Nette\Utils\Random;
 
 final readonly class ProjectSettingService
 {
@@ -43,9 +44,7 @@ final readonly class ProjectSettingService
             }
         }
 
-        $project->setHash(uniqid(more_entropy: true));
-        $this->entityManager->persist($project);
-
-        $this->entityManager->run();
+        $project->setHash(Random::generate(32));
+        $this->entityManager->persist($project)->run();
     }
 }

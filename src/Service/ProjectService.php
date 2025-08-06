@@ -9,6 +9,7 @@ use App\Entity\ProjectMethod;
 use App\Entity\ProjectSetting;
 use App\Repository\MethodRepository;
 use Cycle\ORM\EntityManagerInterface;
+use Nette\Utils\Random;
 
 final readonly class ProjectService
 {
@@ -28,12 +29,11 @@ final readonly class ProjectService
         $project = new Project();
         $project->setUserId($userId);
         $project->setSecretKey(uniqid());
-        $project->setHash(uniqid(more_entropy: true));
+        $project->setHash(Random::generate(32));
         $project->setCode($this->codeGenerator->getName());
         $project->setIsSandbox((int)$isSandbox);
 
-        $this->entityManager->persist($project);
-        $this->entityManager->run();
+        $this->entityManager->persist($project)->run();
 
         foreach ($this->methodRepository->findAll() as $method) {
             $projectMethod = new ProjectMethod();

@@ -2,24 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Project;
 
 use App\Dto\PaymentPageDtoAssembler;
 use App\Repository\ProjectRepository;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Parameter;
 use OpenApi\Attributes\Schema;
-use OpenApi\Attributes\Tag;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\Router\HydratorAttribute\RouteArgument;
 
 final readonly class AggregationController
 {
-    #[Tag(
-        name: 'aggregation',
-        description: 'Project service aggregation API'
-    )]
     public function __construct(
         private ProjectRepository $projectRepository,
         private PaymentPageDtoAssembler $paymentPageDtoAssembler,
@@ -28,7 +23,7 @@ final readonly class AggregationController
     #[OA\Get(
         path: '/aggregation/payment-page/{projectHash}',
         summary: 'Return aggregated project data',
-        tags: ['aggregation'],
+        tags: ['project'],
         responses: [
             new OA\Response(
                 response: 200,

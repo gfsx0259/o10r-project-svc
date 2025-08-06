@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
     type: 'object'
 )]
 #[OA\Schema(
-    schema: 'Method',
+    schema: 'ProjectMethod',
     type: 'integer',
     example: 10
 )]

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Controller\AggregationController;
-use App\Controller\CatalogController;
+use App\Controller\Catalog\MethodController;
+use App\Controller\Catalog\SchemaController;
 use App\Controller\IndexController;
-use App\Controller\ProjectController;
+use App\Controller\Project\AggregationController;
+use App\Controller\Project\ProjectController;
 use App\Middleware\SessionMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
@@ -43,19 +44,28 @@ return [
         ->action([AggregationController::class, 'paymentPage']),
 
     Route::get('/catalog/method')
-        ->action([CatalogController::class, 'getMethods']),
+        ->action([MethodController::class, 'read']),
+
+    Route::post('/catalog/method')
+        ->action([MethodController::class, 'create']),
+
+    Route::patch('/catalog/method/{methodId}')
+        ->action([MethodController::class, 'update']),
+
+    Route::delete('/catalog/method/{methodId}')
+        ->action([MethodController::class, 'delete']),
 
     Route::get('/catalog/schema')
-        ->action([CatalogController::class, 'getSchemas']),
+        ->action([SchemaController::class, 'read']),
 
     Route::post('/catalog/schema')
-        ->action([CatalogController::class, 'createSchema']),
+        ->action([SchemaController::class, 'create']),
 
     Route::patch('/catalog/schema/{schemaId}')
-        ->action([CatalogController::class, 'updateSchema']),
+        ->action([SchemaController::class, 'update']),
 
     Route::delete('/catalog/schema/{schemaId}')
-        ->action([CatalogController::class, 'deleteSchema']),
+        ->action([SchemaController::class, 'delete']),
 
     Group::create('/docs')
         ->routes(

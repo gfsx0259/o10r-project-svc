@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Project;
 
 use App\Dto\ProjectDtoAssembler;
 use App\Dto\SettingDtoAssembler;
@@ -164,7 +164,7 @@ final readonly class ProjectController
                                 new OA\Property(
                                     property: 'data',
                                     type: 'array',
-                                    items: new OA\Items(ref: '#/components/schemas/Method'),
+                                    items: new OA\Items(ref: '#/components/schemas/ProjectMethod'),
                                 )
                             ]
                         )
@@ -214,7 +214,7 @@ final readonly class ProjectController
                             new OA\Property(
                                 property: 'data',
                                 type: 'array',
-                                items: new OA\Items(ref: '#/components/schemas/Method'),
+                                items: new OA\Items(ref: '#/components/schemas/ProjectMethod'),
                             ),
                         ]),
                     ]
