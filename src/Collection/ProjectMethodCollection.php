@@ -2,7 +2,7 @@
 
 namespace App\Collection;
 
-use App\Entity\ProjectMethod;
+use App\Entity\Project\ProjectMethod;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ProjectMethodCollection extends ArrayCollection

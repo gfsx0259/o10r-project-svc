@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\Project;
 
-use App\Entity\Project;
+use App\Entity\Project\Project;
 
 final readonly class PaymentPageDtoAssembler
 {

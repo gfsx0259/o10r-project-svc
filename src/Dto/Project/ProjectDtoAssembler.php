@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\Project;
 
 use App\Collection\ProjectMethodCollection;
 use App\Collection\ProjectSettingCollection;
-use App\Entity\Project;
-use App\Entity\ProjectSetting;
+use App\Entity\Project\Project;
+use App\Entity\Project\ProjectSetting;
 use App\Repository\ProjectSettingRepository;
 
 final readonly class ProjectDtoAssembler

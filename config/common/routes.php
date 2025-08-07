@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controller\Catalog\MethodController;
 use App\Controller\Catalog\SchemaController;
+use App\Controller\Gateway\ManageController;
 use App\Controller\IndexController;
 use App\Controller\Project\AggregationController;
 use App\Controller\Project\ProjectController;
@@ -20,6 +21,43 @@ return [
     Route::get('/')
         ->action([IndexController::class, 'index'])
         ->name('app/index'),
+
+    Route::get('/gateway/route')
+        ->action([ManageController::class, 'getRoutes']),
+
+    Route::post('/gateway/route')
+        ->action([ManageController::class, 'createRoute']),
+
+    Route::patch('/gateway/route/{routeId}')
+        ->action([ManageController::class, 'updateRoute']),
+
+    Route::delete('/gateway/route/{routeId}')
+        ->action([ManageController::class, 'deleteRoute']),
+
+    Route::get('/gateway/scenario')
+        ->action([ManageController::class, 'getScenario']),
+
+    Route::post('/gateway/scenario')
+        ->action([ManageController::class, 'createScenario']),
+
+    Route::patch('/gateway/scenario/{scenarioId}')
+        ->action([ManageController::class, 'updateScenario']),
+
+    Route::delete('/gateway/scenario/{scenarioId}')
+        ->action([ManageController::class, 'deleteScenario']),
+
+    Route::get('/gateway/callback')
+        ->action([ManageController::class, 'getCallback']),
+
+    Route::post('/gateway/callback')
+        ->action([ManageController::class, 'createCallback']),
+
+    Route::patch('/gateway/callback/{callbackId}')
+        ->action([ManageController::class, 'updateCallback']),
+
+    Route::delete('/gateway/callback/{callbackId}')
+        ->action([ManageController::class, 'deleteCallback']),
+
 
     Route::get('/project')
         ->middleware(SessionMiddleware::class)

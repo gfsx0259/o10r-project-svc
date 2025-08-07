@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\ProjectMethod;
+use App\Entity\Project\ProjectMethod;
 use App\Repository\ProjectMethodRepository;
 use Cycle\ORM\EntityManagerInterface;
 

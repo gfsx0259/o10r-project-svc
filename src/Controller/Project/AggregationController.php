@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Project;
 
-use App\Dto\PaymentPageDtoAssembler;
+use App\Dto\Project\PaymentPageDtoAssembler;
 use App\Repository\ProjectRepository;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Parameter;

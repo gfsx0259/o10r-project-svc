@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Catalog;
 
-use App\Entity\MethodFormSchema;
+use App\Entity\Catalog\MethodFormSchema;
 use App\Repository\MethodFormSchemaRepository;
 use App\Service\CatalogSchemeService;
 use OpenApi\Attributes as OA;
@@ -186,7 +186,6 @@ final readonly class SchemaController
         #[RouteArgument('schemaId')]
         int $schemaId
     ): ResponseInterface {
-
         $catalogSchemeService->delete($schemaId);
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);

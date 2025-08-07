@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\Catalog;
 
 use App\Repository\MethodRepository;
 use Cycle\Annotated\Annotation\Column;

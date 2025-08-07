@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\MethodFormSchema;
+use App\Entity\Catalog\MethodFormSchema;
 use App\Repository\MethodFormSchemaRepository;
 use Cycle\ORM\EntityManagerInterface;
 

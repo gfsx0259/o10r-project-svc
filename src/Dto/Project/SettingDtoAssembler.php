@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\Project;
 
-use App\Entity\ProjectSetting;
+use App\Entity\Project\ProjectSetting;
 use App\Repository\ProjectSettingRepository;
 
 final readonly class SettingDtoAssembler

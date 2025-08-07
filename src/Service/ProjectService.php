@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Project;
-use App\Entity\ProjectMethod;
-use App\Entity\ProjectSetting;
+use App\Entity\Project\Project;
+use App\Entity\Project\ProjectMethod;
+use App\Entity\Project\ProjectSetting;
 use App\Repository\MethodRepository;
 use Cycle\ORM\EntityManagerInterface;
 use Nette\Utils\Random;

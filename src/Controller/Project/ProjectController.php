@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Project;
 
-use App\Dto\ProjectDtoAssembler;
-use App\Dto\SettingDtoAssembler;
-use App\Entity\Project;
-use App\Entity\ProjectMethod;
+use App\Dto\Project\ProjectDtoAssembler;
+use App\Dto\Project\SettingDtoAssembler;
+use App\Entity\Project\Project;
+use App\Entity\Project\ProjectMethod;
 use App\Repository\ProjectMethodRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\ProjectSettingRepository;

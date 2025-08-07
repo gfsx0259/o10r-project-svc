@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Method;
+use App\Entity\Catalog\Method;
 use App\Repository\MethodRepository;
 use Cycle\ORM\EntityManagerInterface;
 

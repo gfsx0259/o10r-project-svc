@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Catalog;
 
-use App\Entity\Method;
+use App\Entity\Catalog\Method;
 use App\Repository\MethodRepository;
 use App\Service\CatalogMethodService;
 use OpenApi\Attributes as OA;
@@ -189,7 +189,6 @@ final readonly class MethodController
         #[RouteArgument('methodId')]
         int $methodId
     ): ResponseInterface {
-
         $catalogMethodService->delete($methodId);
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);

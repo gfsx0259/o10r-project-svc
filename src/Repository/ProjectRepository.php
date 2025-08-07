@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Project;
+use App\Entity\Project\Project;
 use App\Exception\NotFoundException;
 use Cycle\ORM\Select\Repository;
 
