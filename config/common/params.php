@@ -7,6 +7,7 @@ use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Schema\Provider\FromFilesSchemaProvider;
 use Cycle\Schema\Provider\SimpleCacheSchemaProvider;
 use Yiisoft\Assets\AssetManager;
+use Yiisoft\Cache\Memcached\Memcached;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Yii\Cycle\Schema\Provider\FromConveyorSchemaProvider;
 
@@ -115,6 +116,18 @@ return [
                 'array' => Cycle\ORM\Collection\ArrayCollectionFactory::class,
                 'doctrine' => \Cycle\ORM\Collection\DoctrineCollectionFactory::class,
                 // 'illuminate' => \Cycle\ORM\Collection\IlluminateCollectionFactory::class,
+            ],
+        ],
+    ],
+    'yiisoft/cache-memcached' => [
+        'memcached' => [
+            'persistentId' => '',
+            'servers' => [
+                [
+                    'host' => $_ENV['DUMMY_CACHE_HOST'],
+                    'port' => $_ENV['DUMMY_CACHE_PORT'],
+                    'weight' => Memcached::DEFAULT_SERVER_WEIGHT,
+                ],
             ],
         ],
     ],

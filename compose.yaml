@@ -46,6 +46,11 @@ services:
       retries: 55
     networks:
       - dev-o10r-network
+  project-cache:
+    restart: unless-stopped
+    networks:
+        - dev-o10r-network
+    image: memcached:latest
 
 volumes:
   ppDatabase:

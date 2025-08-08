@@ -40,7 +40,6 @@ class Project
         innerKey: 'id',
         outerKey: 'project_id',
         collection: ProjectSettingCollection::class,
-
     )]
     private ProjectSettingCollection $settings;
 

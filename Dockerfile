@@ -29,7 +29,8 @@ RUN <<SH
     php-frankenphp-8.3-simplexml \
     php-frankenphp-8.3-pdo \
     php-frankenphp-8.3-pdo_mysql \
-    php-frankenphp-8.3-mysqlnd
+    php-frankenphp-8.3-mysqlnd \
+    php-frankenphp-8.3-memcached
 
     echo "variables_order=EGPCS" > /etc/php/conf.d/99-env.ini
 SH

@@ -45,6 +45,7 @@
         "symfony/console": "^6.0",
         "vlucas/phpdotenv": "^5.3",
         "yiisoft/cache-file": "^3.0",
+        "yiisoft/cache-memcached": "^2.0",
         "yiisoft/config": "^1.0",
         "yiisoft/data": "^1.0",
         "yiisoft/data-response": "^2.0",

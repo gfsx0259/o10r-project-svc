@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f825b7a22006b9d19cf5690bda5ff410",
+    "content-hash": "8a6f22330f460fcbf64c5e8194d48b65",
     "packages": [
         {
             "name": "alexkart/curl-builder",
@@ -4729,6 +4729,85 @@
                 }
             ],
             "time": "2025-01-13T20:33:48+00:00"
+        },
+        {
+            "name": "yiisoft/cache-memcached",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/cache-memcached.git",
+                "reference": "1f0222683d0ed13be7343f1c07d06e9a920a65ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/cache-memcached/zipball/1f0222683d0ed13be7343f1c07d06e9a920a65ff",
+                "reference": "1f0222683d0ed13be7343f1c07d06e9a920a65ff",
+                "shasum": ""
+            },
+            "require": {
+                "ext-memcached": "*",
+                "php": "^8.0",
+                "psr/simple-cache": "^2.0|^3.0"
+            },
+            "provide": {
+                "psr/simple-cache-implementation": "1.0.0"
+            },
+            "require-dev": {
+                "maglnet/composer-require-checker": "^4.4",
+                "phpunit/phpunit": "^9.5",
+                "rector/rector": "^0.15.13",
+                "roave/infection-static-analysis-plugin": "^1.16",
+                "spatie/phpunit-watcher": "^1.23",
+                "vimeo/psalm": "^4.30|^5.6",
+                "yiisoft/di": "^1.2"
+            },
+            "type": "library",
+            "extra": {
+                "config-plugin": {
+                    "di": "di.php",
+                    "params": "params.php"
+                },
+                "config-plugin-options": {
+                    "source-directory": "config"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Yiisoft\\Cache\\Memcached\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Yii Caching Library - Memcached Handler",
+            "homepage": "https://www.yiiframework.com/",
+            "keywords": [
+                "cache",
+                "framework",
+                "memcached",
+                "psr-16",
+                "yii"
+            ],
+            "support": {
+                "chat": "https://t.me/yii3en",
+                "forum": "https://www.yiiframework.com/forum/",
+                "irc": "irc://irc.freenode.net/yii",
+                "issues": "https://github.com/yiisoft/cache-memcached/issues?state=open",
+                "source": "https://github.com/yiisoft/cache-memcached",
+                "wiki": "https://www.yiiframework.com/wiki/"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/yiisoft",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/yiisoft",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2023-02-15T14:48:34+00:00"
         },
         {
             "name": "yiisoft/config",

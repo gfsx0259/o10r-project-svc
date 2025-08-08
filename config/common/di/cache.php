@@ -4,5 +4,5 @@ declare(strict_types=1);
 
 return [
     Yiisoft\Cache\CacheInterface::class => Yiisoft\Cache\Cache::class,
-    Psr\SimpleCache\CacheInterface::class => Yiisoft\Cache\File\FileCache::class,
+    Psr\SimpleCache\CacheInterface::class => \Yiisoft\Cache\Memcached\Memcached::class,
 ];

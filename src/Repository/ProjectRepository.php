@@ -12,7 +12,11 @@ final class ProjectRepository extends Repository
 {
     public function getById(int $id): Project
     {
-        return $this->findByPK($id);
+        if (!$project = $this->findByPK($id)) {
+            throw new NotFoundException();
+        }
+
+        return $project;
     }
 
     /**

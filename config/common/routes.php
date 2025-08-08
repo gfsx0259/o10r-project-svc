@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controller\Catalog\MethodController;
 use App\Controller\Catalog\SchemaController;
+use App\Controller\Gateway\DummyController;
 use App\Controller\Gateway\ManageController;
 use App\Controller\IndexController;
 use App\Controller\Project\AggregationController;
@@ -21,6 +22,15 @@ return [
     Route::get('/')
         ->action([IndexController::class, 'index'])
         ->name('app/index'),
+
+    Route::post('/gateway/access/{projectId}')
+        ->action([DummyController::class, 'access']),
+
+    Route::post('/gateway/payment')
+        ->action([DummyController::class, 'payment']),
+
+    Route::get('/gateway/payment/{paymentId}')
+        ->action([DummyController::class, 'status']),
 
     Route::get('/gateway/route')
         ->action([ManageController::class, 'getRoutes']),

@@ -8,4 +8,8 @@ use Cycle\ORM\Select\Repository;
 
 final class ScenarioRepository extends Repository
 {
+    public function findByRoute(int $routeId): array
+    {
+        return $this->findAll(['route_id' => $routeId]);
+    }
 }
