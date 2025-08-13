@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Module\Dummy;
+namespace App\Module\Dummy\Collection;
 
-use App\Module\Dummy\Collection\ArrayCollection;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

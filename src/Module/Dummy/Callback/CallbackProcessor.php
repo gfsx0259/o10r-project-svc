@@ -2,24 +2,25 @@
 
 namespace App\Module\Dummy\Callback;
 
-use App\Module\Dummy\Action\AbstractAction;
-use App\Module\Dummy\ActionFactory;
+use App\Module\Dummy\Action\ActionPicker;
 use App\Module\Dummy\Collection\ArrayCollection;
 use App\Module\Dummy\State;
 use App\Module\Dummy\StateManager;
 
 /**
  * Process callback entity:
+ * * Find current callback
  * * Apply overrides to callback
  * * Move cursor or register action
  * * Save state instance to storage
+ * * Return callback
  */
 final readonly class CallbackProcessor
 {
     public function __construct(
-        private ActionFactory $actionFactory,
         private StateManager $stateManager,
         private OverrideProcessor $overrideProcessor,
+        private ActionPicker $actionPicker,
     ) {}
 
     public function process(State $state): ArrayCollection
@@ -27,8 +28,14 @@ final readonly class CallbackProcessor
         $collection = new ArrayCollection($state->findCurrentCallback());
         $collection = $this->overrideProcessor->process($collection, $state);
 
-        if ($action = $this->actionFactory->make($collection, $state)) {
-            $this->applyAction($action, $state);
+        if ($action = $this->actionPicker->pickAccepted($collection)) {
+            $actionKey = $action->resolveAcceptedKey($collection);
+
+            if ($state->isActionCompleted($actionKey)) {
+                $this->next($state);
+            } else {
+                $state->registerAction($actionKey);
+            }
         } else {
             $this->next($state);
         }
@@ -36,13 +43,6 @@ final readonly class CallbackProcessor
         $this->stateManager->save($state);
 
         return $collection;
-    }
-
-    private function applyAction(AbstractAction $action, State $state): void
-    {
-        $action->isCompleted()
-            ? $this->next($state)
-            : $action->register();
     }
 
     private function next(State $state): void

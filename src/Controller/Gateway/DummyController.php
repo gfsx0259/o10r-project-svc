@@ -7,6 +7,7 @@ namespace App\Controller\Gateway;
 use App\Dto\Gateway\StatusDto;
 use App\Exception\NotFoundException;
 use App\Module\Dummy\Action\AcsAction;
+use App\Module\Dummy\Action\ActionPicker;
 use App\Module\Dummy\Action\ApsAction;
 use App\Module\Dummy\ActionFactory;
 use App\Module\Dummy\Callback\CallbackCollectionProvider;
@@ -291,29 +292,31 @@ class DummyController
     public function complete(
         DataResponseFactoryInterface $responseFactory,
         StateManager $stateManager,
-        CallbackProcessor $callbackProcessor,
-        ActionFactory $actionFactory,
+        ActionPicker $actionPicker,
         RequestProviderInterface $requestProvider,
     ): ResponseInterface
     {
-        $payload = array_merge($requestProvider->get()->getQueryParams(), $requestProvider->get()->getParsedBody());
+        $requestParams = array_merge(
+            $requestProvider->get()->getQueryParams(),
+            $requestProvider->get()->getParsedBody(),
+        );
 
-        $uniqueKey = $this->resolveUniqueKey($payload);
+        $payload = new ArrayCollection($requestParams);
 
-        if (!$state = $stateManager->restore($uniqueKey)) {
+        if (!$action = $actionPicker->pickCompleted($payload)) {
+            throw new LogicException('Can not find action to complete');
+        }
+
+        $actionKey = $action->resolveCompletedKey($payload);
+
+        if (!$state = $stateManager->restore($actionKey)) {
             throw new LogicException('State must be exists');
         }
 
-        $action = $actionFactory->make(
-            $callbackProcessor->process($state),
-            $state
-        );
-
-        if (!$action) {
-            throw new LogicException('Action must be exists');
+        if (!$state->isActionCompleted($actionKey)) {
+            $state->completeAction($actionKey);
+            $state->next();
         }
-
-        $action->complete(new ArrayCollection($payload));
 
         $stateManager->save($state);
 
@@ -343,21 +346,5 @@ class DummyController
         return $responseFactory
             ->createResponse(code: 302)
             ->withHeader('Location', $redirectTo);
-    }
-
-    private function resolveUniqueKey(array $payload): string
-    {
-        $uniqueKeyPaths = [
-            AcsAction::ACTION_KEY_NAME,
-            ApsAction::ACTION_KEY_NAME,
-        ];
-
-        foreach ($uniqueKeyPaths as $uniqueKeyPath) {
-            if (isset($payload[$uniqueKeyPath])) {
-                return $payload[$uniqueKeyPath];
-            }
-        }
-
-        throw new LogicException('Unique key must be provided');
     }
 }
