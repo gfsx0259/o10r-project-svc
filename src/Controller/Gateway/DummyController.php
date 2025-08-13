@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Gateway;
 
-use App\Module\Dummy\Callback\CallbackResolver;
+use App\Dto\Gateway\StatusDto;
+use App\Exception\NotFoundException;
+use App\Module\Dummy\Action\AcsAction;
+use App\Module\Dummy\Action\ApsAction;
+use App\Module\Dummy\ActionFactory;
+use App\Module\Dummy\Callback\CallbackCollectionProvider;
+use App\Module\Dummy\Callback\CallbackProcessor;
+use App\Module\Dummy\Collection\ArrayCollection;
 use App\Module\Dummy\State;
 use App\Module\Dummy\StateManager;
 use App\Repository\MethodRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\RouteRepository;
+use LogicException;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use OpenApi\Attributes\Parameter;
@@ -19,11 +27,11 @@ use OpenApi\Attributes\SecurityScheme;
 use OpenApi\Attributes\Tag;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\Http\Status;
 use Yiisoft\RequestProvider\RequestProviderInterface;
 use Yiisoft\Router\HydratorAttribute\RouteArgument;
+use Yiisoft\Router\UrlGeneratorInterface;
 
 #[SecurityScheme(
     securityScheme: 'bearerAuth',
@@ -38,31 +46,63 @@ use Yiisoft\Router\HydratorAttribute\RouteArgument;
 )]
 #[OA\Schema(
     schema: 'PaymentRequestGeneralSection',
+    required: ['payment_id', 'project_id'],
     properties: [
         new OA\Property(property: 'payment_id', type: 'integer', example: 'EP_100ASDF'),
         new OA\Property(property: 'project_id', type: 'integer', example: 500),
-        new OA\Property(property: 'method_code', type: 'string', example: 'card'),
     ],
     type: 'object'
 )]
 #[OA\Schema(
     schema: 'PaymentRequestPaymentSection',
+    required: ['amount', 'currency', 'method'],
     properties: [
         new OA\Property(property: 'amount', type: 'integer', example: 1000),
         new OA\Property(property: 'currency', type: 'string', example: 'RUB'),
+        new OA\Property(property: 'method', type: 'string', example: 'enthusiast'),
     ],
     type: 'object'
 )]
 #[OA\Schema(
+    schema: 'PaymentRequestMethodSection',
+    properties: [
+        new OA\Property(
+            property: 'card',
+            properties: [
+                new OA\Property(property: 'return_url', type: 'string', format: 'uri')
+            ],
+            type: 'object'
+        )
+    ],
+    type: 'object',
+)]
+#[OA\Schema(
     schema: 'PaymentRequest',
+    required: ['general', 'payment'],
     properties: [
         new OA\Property(property: 'general', ref: '#/components/schemas/PaymentRequestGeneralSection', type: 'object'),
         new OA\Property(property: 'payment', ref: '#/components/schemas/PaymentRequestPaymentSection', type: 'object'),
+        new OA\Property(property: 'method', ref: '#/components/schemas/PaymentRequestMethodSection', type: 'object'),
+    ],
+    type: 'object'
+)]
+#[OA\Schema(
+    schema: 'CompleteRequest',
+    properties: [
+        new OA\Property(property: 'general', ref: '#/components/schemas/PaymentRequestGeneralSection', type: 'object'),
+        new OA\Property(property: 'md', type: 'string', example: 'bb4f6b9a6c651d0e1f2d8ddfc4232b00'),
     ],
     type: 'object'
 )]
 class DummyController
 {
+    private const string
+        STATUS_UNPAID = 'unpaid',
+        STATUS_PROCESSING = 'processing',
+        STATUS_REDIRECT = 'redirect',
+        STATUS_SUCCESS = 'success',
+        STATUS_DECLINE = 'decline';
+
     #[OA\Post(
         path: '/gateway/access/{projectId}',
         description: 'We should proxy merchant credentials to gateway, ensure that merchant has access to specified project. Create session if it is ok.',
@@ -100,9 +140,12 @@ class DummyController
             : $responseFactory->createResponse(null, Status::FORBIDDEN);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     #[OA\Post(
         path: '/gateway/payment',
-        description: 'Accept payment from trusted session service by internal network',
+        description: 'Accept payment from trusted session service by internal network. Create state and response with processing status.',
         requestBody: new RequestBody(
             required: true,
             content: new JsonContent(
@@ -112,7 +155,22 @@ class DummyController
         ),
         tags: ['gateway/dummy'],
         responses: [
-            new OA\Response(response: '200', description: 'Success'),
+            new OA\Response(
+                response: '200',
+                description: 'Success',
+                content: new OA\JsonContent(
+                    allOf: [
+                        new OA\Schema(ref: '#/components/schemas/Response'),
+                        new OA\Schema(properties: [
+                            new OA\Property(
+                                property: 'data',
+                                ref: '#/components/schemas/Status',
+                                type: 'object',
+                            ),
+                        ]),
+                    ]
+                ),
+            ),
             new OA\Response(response: '404', description: 'Project not found'),
         ]
     )]
@@ -121,11 +179,13 @@ class DummyController
         RouteRepository $routeRepository,
         MethodRepository $methodRepository,
         RequestProviderInterface $requestProvider,
+        CallbackCollectionProvider $callbackCollectionProvider,
         StateManager $stateManager,
     ): ResponseInterface {
-        $initialRequest = $requestProvider->get()->getParsedBody();
+        $initialRequest = new ArrayCollection($requestProvider->get()->getParsedBody());
 
-        $method = $methodRepository->getByCode(ArrayHelper::getValueByPath($initialRequest, 'general.method_code'));
+        $method = $methodRepository->getByCode($initialRequest->get('payment.method'));
+        $paymentId = $initialRequest->get('general.payment_id');
 
         if (!$route = $routeRepository->getByMethod($method->getId())) {
             $responseFactory
@@ -133,33 +193,44 @@ class DummyController
                 ->withStatus(Status::NOT_FOUND);
         }
 
-        $paymentId = ArrayHelper::getValueByPath($initialRequest, 'general.payment_id');
-
         $state = new State(
             $paymentId,
             $route->getId(),
-            $initialRequest
+            $initialRequest->data,
+            $callbackCollectionProvider->provide($route->getId(), $initialRequest->data)
         );
 
         $stateManager->save($state);
 
-        $responseData = [
-            'status' => 'success',
-            'project_id' => $state->getInitialRequest()->get('general.project_id'),
-            'payment_id' => $state->getInitialRequest()->get('general.payment_id'),
-        ];
-
         return $responseFactory
-            ->createResponse($responseData);
+            ->createResponse((array) new StatusDto(
+                self::STATUS_PROCESSING,
+                $state->getInitialRequest()->get('general.project_id'),
+                $state->getInitialRequest()->get('general.payment_id')
+            ));
     }
-
 
     #[OA\Get(
         path: '/gateway/payment/{paymentId}',
         description: 'Get payment details by payment id',
         tags: ['gateway/dummy'],
         responses: [
-            new OA\Response(response: '200', description: 'Success'),
+            new OA\Response(
+                response: '200',
+                description: 'Success',
+                content: new OA\JsonContent(
+                    allOf: [
+                        new OA\Schema(ref: '#/components/schemas/Response'),
+                        new OA\Schema(properties: [
+                            new OA\Property(
+                                property: 'data',
+                                ref: '#/components/schemas/Status',
+                                type: 'object',
+                            ),
+                        ]),
+                    ]
+                ),
+            ),
             new OA\Response(response: '404', description: 'Project not found'),
         ]
     )]
@@ -175,28 +246,118 @@ class DummyController
     public function status(
         DataResponseFactoryInterface $responseFactory,
         StateManager $stateManager,
-        CallbackResolver $callbackResolver,
+        CallbackProcessor $callbackProcessor,
         #[RouteArgument('paymentId')]
         string $paymentId,
     ): ResponseInterface {
         if (!$state = $stateManager->get($paymentId)) {
-            return $this->responseNotFound($responseFactory);
+            return $responseFactory
+                ->createResponse((array) new StatusDto(
+                    self::STATUS_UNPAID,
+                    $state->getInitialRequest()->get('general.project_id'),
+                    $state->getInitialRequest()->get('general.payment_id')
+                ));
         }
-
-        $callback = $callbackResolver->resolve($state);
+        $callback = $callbackProcessor->process($state);
 
         return $responseFactory
-            ->createResponse(json_decode($callback->getBody(), true));
+            ->createResponse($callback->data);
     }
 
-    private function responseNotFound(DataResponseFactoryInterface $responseFactory): ResponseInterface
+    #[OA\Post(
+        path: '/gateway/complete',
+        description: 'Complete action',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                ref: '#/components/schemas/CompleteRequest',
+                type: 'object',
+            )
+        ),
+        tags: ['gateway/dummy'],
+        responses: [
+            new OA\Response(response: '200', description: 'Success'),
+            new OA\Response(response: '404', description: 'Project not found'),
+        ]
+    )]
+    #[Parameter(
+        parameter: 'uniqueKey',
+        name: 'uniqueKey',
+        description: 'Unique key',
+        in: 'query',
+        schema: new Schema(type: 'string'),
+        example: 11,
+    )]
+    public function complete(
+        DataResponseFactoryInterface $responseFactory,
+        StateManager $stateManager,
+        CallbackProcessor $callbackProcessor,
+        ActionFactory $actionFactory,
+        RequestProviderInterface $requestProvider,
+    ): ResponseInterface
     {
+        $payload = array_merge($requestProvider->get()->getQueryParams(), $requestProvider->get()->getParsedBody());
+
+        $uniqueKey = $this->resolveUniqueKey($payload);
+
+        if (!$state = $stateManager->restore($uniqueKey)) {
+            throw new LogicException('State must be exists');
+        }
+
+        $action = $actionFactory->make(
+            $callbackProcessor->process($state),
+            $state
+        );
+
+        if (!$action) {
+            throw new LogicException('Action must be exists');
+        }
+
+        $action->complete(new ArrayCollection($payload));
+
+        $stateManager->save($state);
+
+        return $responseFactory->createResponse();
+    }
+
+    #[Parameter(
+        parameter: 'page',
+        name: 'page',
+        description: 'page',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'string'),
+        example: 11,
+    )]
+    public function proxy(
+        DataResponseFactoryInterface $responseFactory,
+        RequestProviderInterface $requestProvider,
+        UrlGeneratorInterface $urlGenerator,
+        #[RouteArgument('page')]
+        string $page
+    ): ResponseInterface {
+        $payload = $requestProvider->get()->getParsedBody();
+
+        $redirectTo = $_ENV['DUMMY_UI_HOST'] . $urlGenerator->generate('action/dummy', ['page' => $page], $payload);
+
         return $responseFactory
-            ->createResponse([
-                'payment' => ['status' => 'error'],
-                'errors' => [
-                    ['code' => '3061', 'message' => 'Transaction not found'],
-                ],
-            ]);
+            ->createResponse(code: 302)
+            ->withHeader('Location', $redirectTo);
+    }
+
+    private function resolveUniqueKey(array $payload): string
+    {
+        $uniqueKeyPaths = [
+            AcsAction::ACTION_KEY_NAME,
+            ApsAction::ACTION_KEY_NAME,
+        ];
+
+        foreach ($uniqueKeyPaths as $uniqueKeyPath) {
+            if (isset($payload[$uniqueKeyPath])) {
+                return $payload[$uniqueKeyPath];
+            }
+        }
+
+        throw new LogicException('Unique key must be provided');
     }
 }

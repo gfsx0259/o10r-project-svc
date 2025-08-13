@@ -28,16 +28,14 @@ final class State
 
     private array $actions = [];
 
-    /**
-     * @param string $paymentId
-     * @param int $routeId
-     * @param array $initialRequest
-     */
-    public function __construct(string $paymentId, int $routeId, array $initialRequest)
+    private array $callbacks = [];
+
+    public function __construct(string $paymentId, int $routeId, array $initialRequest, array $callbacks)
     {
         $this->paymentId = $paymentId;
         $this->routeId = $routeId;
         $this->initialRequest = $initialRequest;
+        $this->callbacks = $callbacks;
     }
 
     public function getPaymentId(): string
@@ -53,6 +51,21 @@ final class State
     public function getInitialRequest(): ArrayCollection
     {
         return new ArrayCollection($this->initialRequest);
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    public function setActions(array $actions): void
+    {
+        $this->actions = $actions;
+    }
+
+    public function setCursor(int $cursor): void
+    {
+        $this->cursor = $cursor;
     }
 
     public function getCursor(): int
@@ -83,11 +96,23 @@ final class State
 
     public function isActionCompleted(string $key): bool
     {
-        return $this->actions[$key] ?? false === true;
+        return ($this->actions[$key] ?? false) === true;
     }
 
-    public function isActionRegistered(string $key): bool
+    public function getCallbacks(): array
     {
-        return isset($this->actions[$key]);
+        return $this->callbacks;
+    }
+
+    public function setCallbacks(array $callbacks): void
+    {
+        $this->callbacks = $callbacks;
+    }
+
+    public function findCurrentCallback(): array
+    {
+        $callbacks = $this->callbacks;
+
+        return $callbacks[$this->cursor] ?? end($callbacks);
     }
 }

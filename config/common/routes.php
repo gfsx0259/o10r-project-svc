@@ -32,6 +32,9 @@ return [
     Route::get('/gateway/payment/{paymentId}')
         ->action([DummyController::class, 'status']),
 
+    Route::post('/gateway/complete')
+        ->action([DummyController::class, 'complete']),
+
     Route::get('/gateway/route')
         ->action([ManageController::class, 'getRoutes']),
 
@@ -114,6 +117,13 @@ return [
 
     Route::delete('/catalog/schema/{schemaId}')
         ->action([SchemaController::class, 'delete']),
+
+    Route::get('/dummy/{page}')
+        ->name('action/dummy'),
+
+    Route::post('/proxy/{page}')
+        ->action([DummyController::class, 'proxy'])
+        ->name('proxy/dummy'),
 
     Group::create('/docs')
         ->routes(
