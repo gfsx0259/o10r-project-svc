@@ -32,11 +32,11 @@ final readonly class StateManager
 
     public function restore(string $uniqueKey): ?State
     {
-        if (!$intermediateState = $this->cache->get($uniqueKey)) {
-            return null;
+        if ($stateByHashedKey = $this->cache->get($uniqueKey)) {
+            return $this->get($stateByHashedKey);
         }
 
-        return $this->get($intermediateState);
+        return null;
     }
 
     public function save(State $state): bool

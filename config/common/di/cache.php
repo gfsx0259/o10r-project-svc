@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Module\Dummy\ArrayCollectionCast;
+use App\Module\Dummy\Collection\ArrayCollectionCast;
 use Predis\Client;
 use Predis\ClientInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
