@@ -19,7 +19,7 @@ use App\Module\Dummy\Collection\ArrayCollection;
  *
  * To test: curl -vvv -X POST https://project.o10r.io/proxy/acs   -H "Content-Type: application/json" -d '{"md": "b428cbb02358afc32cf32f9bdb725a51"}'
  */
-class AcsAction implements ActionInterface
+readonly class AcsAction implements ActionInterface
 {
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {

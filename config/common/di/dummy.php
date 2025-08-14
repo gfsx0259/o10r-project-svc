@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Module\Dummy\Action\AcsAction;
 use App\Module\Dummy\Action\ActionPicker;
 use App\Module\Dummy\Action\ApsAction;
+use App\Module\Dummy\Action\ClarificationAction;
+use App\Module\Dummy\Action\FallbackAction;
 use App\Module\Dummy\Callback\OverrideProcessor;
 
 return [
@@ -20,6 +22,8 @@ return [
             'actionClasses' => [
                 ApsAction::class,
                 AcsAction::class,
+                ClarificationAction::class,
+                FallbackAction::class,
             ]
         ]
     ]

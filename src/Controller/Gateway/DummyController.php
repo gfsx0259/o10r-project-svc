@@ -6,10 +6,7 @@ namespace App\Controller\Gateway;
 
 use App\Dto\Gateway\StatusDto;
 use App\Exception\NotFoundException;
-use App\Module\Dummy\Action\AcsAction;
 use App\Module\Dummy\Action\ActionPicker;
-use App\Module\Dummy\Action\ApsAction;
-use App\Module\Dummy\ActionFactory;
 use App\Module\Dummy\Callback\CallbackCollectionProvider;
 use App\Module\Dummy\Callback\CallbackProcessor;
 use App\Module\Dummy\Collection\ArrayCollection;
@@ -310,7 +307,9 @@ class DummyController
         $actionKey = $action->resolveCompletedKey($payload);
 
         if (!$state = $stateManager->restore($actionKey)) {
-            throw new LogicException('State must be exists');
+            if (!$state = $stateManager->get($payload->get('general.payment_id'))) {
+                throw new LogicException('State must be exists');
+            }
         }
 
         if (!$state->isActionCompleted($actionKey)) {

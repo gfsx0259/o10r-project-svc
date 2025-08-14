@@ -17,7 +17,7 @@ use App\Module\Dummy\Collection\ArrayCollection;
  *  5. Dummy completes action
  *  6. PP fetch next status
  */
-class ApsAction implements ActionInterface
+readonly class ApsAction implements ActionInterface
 {
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {
