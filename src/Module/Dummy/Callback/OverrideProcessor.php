@@ -20,6 +20,7 @@ final readonly class OverrideProcessor
         'MD' => 'MD',
         'PAYMENT_ID' => 'PAYMENT_ID',
         'PROJECT_ID' => 'PROJECT_ID',
+        'METHOD_CODE' => 'METHOD_CODE',
     ];
 
     public function __construct(
@@ -34,6 +35,7 @@ final readonly class OverrideProcessor
 
         $source->set('PAYMENT_ID', $state->getPaymentId());
         $source->set('PROJECT_ID', $state->getInitialRequest()->get('general.project_id'));
+        $source->set('METHOD_CODE', $state->getInitialRequest()->get('payment.method'));
 
         $source->set('APS_URL', $this->generateUrl($this->host, 'action/dummy','aps', ['uniqueKey' => $this->stateManager->generateAccessKey($state)]));
 
