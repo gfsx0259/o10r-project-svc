@@ -13,7 +13,8 @@ return [
     OverrideProcessor::class => [
         'class' => OverrideProcessor::class,
         '__construct()' => [
-            'host' => $_ENV['DUMMY_UI_HOST'],
+            'uiHost' => $_ENV['DUMMY_UI_HOST'],
+            'selfHost' => $_ENV['DUMMY_SELF_HOST'],
         ],
     ],
     ActionPicker::class  => [

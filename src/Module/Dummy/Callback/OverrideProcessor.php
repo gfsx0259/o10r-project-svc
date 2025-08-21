@@ -26,7 +26,8 @@ final readonly class OverrideProcessor
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private StateManager $stateManager,
-        private string $host,
+        private string $uiHost,
+        private string $selfHost,
     ) {}
 
     public function process(ArrayCollection $callback, State $state): ArrayCollection
@@ -37,19 +38,17 @@ final readonly class OverrideProcessor
         $source->set('PROJECT_ID', $state->getInitialRequest()->get('general.project_id'));
         $source->set('METHOD_CODE', $state->getInitialRequest()->get('payment.method'));
 
-        $source->set('APS_URL', $this->generateUrl(
-            $this->host,
-            'action/dummy',
-            'aps',
-            [
-                'unique_key' => $this->stateManager->generateAccessKey($state),
-                'termination_url' => $this->urlGenerator->generateAbsolute('redirectComplete', scheme: 'https', host: $_ENV['DUMMY_SELF_HOST']),
-            ]
-        ));
+        $acsTermUrl = $state->getInitialRequest()->get('return_url.default');
+        $apsTermUrl = $this->generateUrl($this->uiHost, 'action/dummy', 'aps', [
+            'unique_key' => $this->stateManager->generateAccessKey($state),
+            'termination_url' => $this->urlGenerator->generateAbsolute('redirectComplete', host: $this->selfHost),
+        ]);
 
-        $source->set('ACS_URL', $this->generateUrl($_ENV['DUMMY_SELF_HOST'], 'proxy/dummy', 'acs'));
-        $source->set('TERM_URL', $state->getInitialRequest()->get('return_url.default'));
+        $source->set('ACS_URL', $this->generateUrl($this->selfHost, 'proxy/dummy', 'acs'));
+        $source->set('TERM_URL', $acsTermUrl);
         $source->set('MD', $this->stateManager->generateAccessKey($state));
+
+        $source->set('APS_URL', $apsTermUrl);
 
         foreach (self::SCHEMA as $placeholder => $sourcePath) {
             if ($value = $source->get($sourcePath)) {
