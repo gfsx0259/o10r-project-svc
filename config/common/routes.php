@@ -33,7 +33,8 @@ return [
         ->action([DummyController::class, 'status']),
 
     Route::post('/gateway/complete')
-        ->action([DummyController::class, 'complete']),
+        ->action([DummyController::class, 'complete'])
+        ->name('redirectComplete'),
 
     Route::get('/gateway/route')
         ->action([ManageController::class, 'getRoutes']),
@@ -118,7 +119,7 @@ return [
     Route::delete('/catalog/schema/{schemaId}')
         ->action([SchemaController::class, 'delete']),
 
-    Route::get('/dummy/{page}')
+    Route::get('/{page}')
         ->name('action/dummy'),
 
     Route::post('/proxy/{page}')

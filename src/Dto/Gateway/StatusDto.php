@@ -19,7 +19,7 @@ final readonly class StatusDto
 {
     public function __construct(
         public string $status,
-        public int $project_id,
-        public string $payment_id,
+        public ?int $project_id = null,
+        public ?string $payment_id = null,
     ) {}
 }

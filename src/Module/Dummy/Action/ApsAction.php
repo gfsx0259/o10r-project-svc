@@ -30,7 +30,7 @@ readonly class ApsAction implements ActionInterface
 
     public function resolveCompletedKey(ArrayCollection $completePayload): ?string
     {
-        return $completePayload->get('uniqueKey');
+        return $completePayload->get('unique_key');
     }
 
     private function parseUniqueKey(string $url): string
@@ -39,6 +39,6 @@ readonly class ApsAction implements ActionInterface
 
         parse_str(parse_url($url, PHP_URL_QUERY), $params);
 
-        return $params['uniqueKey'];
+        return $params['unique_key'];
     }
 }

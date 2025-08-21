@@ -6,7 +6,9 @@ namespace App\Controller\Gateway;
 
 use App\Dto\Gateway\StatusDto;
 use App\Exception\NotFoundException;
+use App\Http\RedirectResponseFactory;
 use App\Module\Dummy\Action\ActionPicker;
+use App\Module\Dummy\Action\ApsAction;
 use App\Module\Dummy\Callback\CallbackCollectionProvider;
 use App\Module\Dummy\Callback\CallbackProcessor;
 use App\Module\Dummy\Collection\ArrayCollection;
@@ -252,8 +254,6 @@ class DummyController
             return $responseFactory
                 ->createResponse((array) new StatusDto(
                     self::STATUS_UNPAID,
-                    $state->getInitialRequest()->get('general.project_id'),
-                    $state->getInitialRequest()->get('general.payment_id')
                 ));
         }
         $callback = $callbackProcessor->process($state);
@@ -287,7 +287,8 @@ class DummyController
         example: 11,
     )]
     public function complete(
-        DataResponseFactoryInterface $responseFactory,
+        RedirectResponseFactory $redirectResponseFactory,
+        DataResponseFactoryInterface $dataResponseFactory,
         StateManager $stateManager,
         ActionPicker $actionPicker,
         RequestProviderInterface $requestProvider,
@@ -295,7 +296,7 @@ class DummyController
     {
         $requestParams = array_merge(
             $requestProvider->get()->getQueryParams(),
-            $requestProvider->get()->getParsedBody(),
+            $requestProvider->get()->getParsedBody() ?? [],
         );
 
         $payload = new ArrayCollection($requestParams);
@@ -319,7 +320,9 @@ class DummyController
 
         $stateManager->save($state);
 
-        return $responseFactory->createResponse();
+        return $action instanceof ApsAction
+            ? $redirectResponseFactory->createResponse($state->getInitialRequest()->get('return_url.default'))
+            : $dataResponseFactory->createResponse();
     }
 
     #[Parameter(
