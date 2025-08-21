@@ -47,7 +47,7 @@ final readonly class OverrideProcessor
             ]
         ));
 
-        $source->set('ACS_URL', $this->generateUrl('https://' . $_ENV['DUMMY_SELF_HOST'], 'proxy/dummy', 'acs'));
+        $source->set('ACS_URL', $this->generateUrl($_ENV['DUMMY_SELF_HOST'], 'proxy/dummy', 'acs'));
         $source->set('TERM_URL', $state->getInitialRequest()->get('return_url.default'));
         $source->set('MD', $this->stateManager->generateAccessKey($state));
 
