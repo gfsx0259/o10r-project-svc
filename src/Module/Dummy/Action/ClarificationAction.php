@@ -28,7 +28,7 @@ readonly class ClarificationAction implements ActionInterface
     {
         return $this->generateHash(
             $completePayload->get('general.payment_id'),
-            array_keys($completePayload->get('additional_data'))
+            array_keys($completePayload->get('clarification'))
         );
     }
 

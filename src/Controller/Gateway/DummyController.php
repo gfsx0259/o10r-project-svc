@@ -160,13 +160,6 @@ class DummyController
                 content: new OA\JsonContent(
                     allOf: [
                         new OA\Schema(ref: '#/components/schemas/Response'),
-                        new OA\Schema(properties: [
-                            new OA\Property(
-                                property: 'data',
-                                ref: '#/components/schemas/Status',
-                                type: 'object',
-                            ),
-                        ]),
                     ]
                 ),
             ),
@@ -218,13 +211,6 @@ class DummyController
                 content: new OA\JsonContent(
                     allOf: [
                         new OA\Schema(ref: '#/components/schemas/Response'),
-                        new OA\Schema(properties: [
-                            new OA\Property(
-                                property: 'data',
-                                ref: '#/components/schemas/Status',
-                                type: 'object',
-                            ),
-                        ]),
                     ]
                 ),
             ),
@@ -261,7 +247,23 @@ class DummyController
 
     #[OA\Post(
         path: '/gateway/complete',
-        description: 'Complete action',
+        description: 'Complete redirect',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                ref: '#/components/schemas/CompleteRequest',
+                type: 'object',
+            )
+        ),
+        tags: ['gateway/dummy'],
+        responses: [
+            new OA\Response(response: '200', description: 'Success'),
+            new OA\Response(response: '404', description: 'Project not found'),
+        ]
+    )]
+    #[OA\Post(
+        path: '/gateway/clarification',
+        description: 'Complete clarification',
         requestBody: new RequestBody(
             required: true,
             content: new JsonContent(

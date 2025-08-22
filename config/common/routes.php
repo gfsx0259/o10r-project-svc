@@ -36,6 +36,9 @@ return [
         ->action([DummyController::class, 'complete'])
         ->name('redirectComplete'),
 
+    Route::post('/gateway/clarification')
+        ->action([DummyController::class, 'complete']),
+
     Route::get('/gateway/route')
         ->action([ManageController::class, 'getRoutes']),
 
