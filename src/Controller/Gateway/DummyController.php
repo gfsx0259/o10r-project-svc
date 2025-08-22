@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Gateway;
 
-use App\Dto\Gateway\StatusDto;
 use App\Exception\NotFoundException;
 use App\Http\RedirectResponseFactory;
 use App\Module\Dummy\Action\ActionPicker;
@@ -184,7 +183,7 @@ class DummyController
     ): ResponseInterface {
         $initialRequest = new ArrayCollection($requestProvider->get()->getParsedBody());
 
-        $method = $methodRepository->getByCode($initialRequest->get('payment.method'));
+        $method = $methodRepository->getByCode($initialRequest->get('payment.method_code'));
         $paymentId = $initialRequest->get('general.payment_id');
 
         if (!$route = $routeRepository->getByMethod($method->getId())) {
@@ -203,11 +202,9 @@ class DummyController
         $stateManager->save($state);
 
         return $responseFactory
-            ->createResponse((array) new StatusDto(
-                self::STATUS_PROCESSING,
-                $state->getInitialRequest()->get('general.project_id'),
-                $state->getInitialRequest()->get('general.payment_id')
-            ));
+            ->createResponse([
+                'payment' => ['status' => self::STATUS_PROCESSING]
+            ]);
     }
 
     #[OA\Get(
@@ -252,9 +249,9 @@ class DummyController
     ): ResponseInterface {
         if (!$state = $stateManager->get($paymentId)) {
             return $responseFactory
-                ->createResponse((array) new StatusDto(
-                    self::STATUS_UNPAID,
-                ));
+                ->createResponse([
+                    'payment' => ['status' => self::STATUS_UNPAID]
+                ]);
         }
         $callback = $callbackProcessor->process($state);
 

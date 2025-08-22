@@ -36,7 +36,7 @@ final readonly class OverrideProcessor
 
         $source->set('PAYMENT_ID', $state->getPaymentId());
         $source->set('PROJECT_ID', $state->getInitialRequest()->get('general.project_id'));
-        $source->set('METHOD_CODE', $state->getInitialRequest()->get('payment.method'));
+        $source->set('METHOD_CODE', $state->getInitialRequest()->get('payment.method_code'));
 
         $acsTermUrl = $state->getInitialRequest()->get('return_url.default');
         $apsTermUrl = $this->generateUrl($this->uiHost, 'action/dummy', 'aps', [
