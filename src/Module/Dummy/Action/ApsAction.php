@@ -21,7 +21,7 @@ readonly class ApsAction implements ActionInterface
 {
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {
-        if (!$apsUrl = $callback->get('return_url.url')) {
+        if (!$apsUrl = $callback->get('aps.redirect.url')) {
             return null;
         }
 

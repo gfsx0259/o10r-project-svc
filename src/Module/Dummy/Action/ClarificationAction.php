@@ -14,10 +14,10 @@ readonly class ClarificationAction implements ActionInterface
 {
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {
-        if ($callback->get('clarification_fields')) {
+        if ($callback->get('clarification')) {
             return $this->generateHash(
                 $callback->get('general.payment_id'),
-                array_keys($callback->get('clarification_fields'))
+                array_keys($callback->get('clarification'))
             );
         }
 

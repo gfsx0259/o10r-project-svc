@@ -14,8 +14,8 @@ readonly class FallbackAction implements ActionInterface
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {
         if (
-            $callback->get('threeds2.iframe.url') ||
-            $callback->get('threeds2.redirect.url')
+            $callback->get('acs.iframe.body.threeDSMethodData') ||
+            $callback->get('acs.redirect.body.threeDSSessionData')
         ) {
             return $callback->get('general.payment_id');
         }

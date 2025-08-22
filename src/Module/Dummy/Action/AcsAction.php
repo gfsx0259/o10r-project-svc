@@ -23,7 +23,7 @@ readonly class AcsAction implements ActionInterface
 {
     public function resolveAcceptedKey(ArrayCollection $callback): ?string
     {
-        return $callback->get('acs.md');
+        return $callback->get('acs.redirect.body.md');
     }
 
     public function resolveCompletedKey(ArrayCollection $completePayload): ?string
