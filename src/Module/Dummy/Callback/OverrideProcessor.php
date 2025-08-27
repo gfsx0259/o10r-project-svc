@@ -16,6 +16,7 @@ final readonly class OverrideProcessor
     private const array SCHEMA = [
         'APS_URL' => 'APS_URL',
         'ACS_URL' => 'ACS_URL',
+        'ACS_HIDDEN_IFRAME_URL' => 'ACS_HIDDEN_IFRAME_URL',
         'TERM_URL' => 'TERM_URL',
         'MD' => 'MD',
         'PAYMENT_ID' => 'PAYMENT_ID',
@@ -38,13 +39,14 @@ final readonly class OverrideProcessor
         $source->set('PROJECT_ID', $state->getInitialRequest()->get('general.project_id'));
         $source->set('METHOD_CODE', $state->getInitialRequest()->get('payment.method_code'));
 
+        $acsNotificationUrl = $state->getInitialRequest()->get('return_url.notification');
         $acsTermUrl = $state->getInitialRequest()->get('return_url.default');
         $apsTermUrl = $this->generateUrl($this->uiHost, 'action/dummy', 'aps', [
             'unique_key' => $this->stateManager->generateAccessKey($state),
             'termination_url' => $this->urlGenerator->generateAbsolute('redirectComplete', host: $this->selfHost),
         ]);
 
-        $source->set('ACS_URL', $this->generateUrl($this->selfHost, 'proxy/dummy', 'acs'));
+        $source->set('ACS_URL', $this->generateUrl($this->selfHost, 'proxy/dummy', 'acs', ['notification_url' => $acsNotificationUrl]));
         $source->set('TERM_URL', $acsTermUrl);
         $source->set('MD', $this->stateManager->generateAccessKey($state));
 

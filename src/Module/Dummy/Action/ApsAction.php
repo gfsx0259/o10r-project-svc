@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Dummy\Action;
 
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\State;
 
 /**
  *  APS redirect action. Use `uniqueKey` query param to identify action.
@@ -19,7 +20,7 @@ use App\Module\Dummy\Collection\ArrayCollection;
  */
 readonly class ApsAction implements ActionInterface
 {
-    public function resolveAcceptedKey(ArrayCollection $callback): ?string
+    public function resolveAcceptedKey(ArrayCollection $callback, State $state): ?string
     {
         if (!$apsUrl = $callback->get('aps.redirect.url')) {
             return null;

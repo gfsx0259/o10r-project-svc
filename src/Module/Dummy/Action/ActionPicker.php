@@ -3,6 +3,7 @@
 namespace App\Module\Dummy\Action;
 
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\State;
 use Yiisoft\Injector\Injector;
 
 final readonly class ActionPicker
@@ -16,13 +17,13 @@ final readonly class ActionPicker
         private array $actionClasses,
     ) {}
 
-    public function pickAccepted(ArrayCollection $callback): ?ActionInterface
+    public function pickAccepted(ArrayCollection $callback, State $state): ?ActionInterface
     {
         foreach ($this->actionClasses as $actionClass) {
             /** @var ActionInterface $actionCandidate */
             $actionCandidate = $this->injector->make($actionClass);
 
-            if ($actionCandidate->resolveAcceptedKey($callback)) {
+            if ($actionCandidate->resolveAcceptedKey($callback, $state)) {
                 return $actionCandidate;
             }
         }

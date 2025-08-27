@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Dummy\Action;
 
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\State;
 
 /**
  * In Clara Flow we don't have a parameter that can be provided and received back.
@@ -12,7 +13,7 @@ use App\Module\Dummy\Collection\ArrayCollection;
  */
 readonly class ClarificationAction implements ActionInterface
 {
-    public function resolveAcceptedKey(ArrayCollection $callback): ?string
+    public function resolveAcceptedKey(ArrayCollection $callback, State $state): ?string
     {
         if ($callback->get('clarification')) {
             return $this->generateHash(
@@ -26,10 +27,16 @@ readonly class ClarificationAction implements ActionInterface
 
     public function resolveCompletedKey(ArrayCollection $completePayload): ?string
     {
-        return $this->generateHash(
-            $completePayload->get('general.payment_id'),
-            array_keys($completePayload->get('clarification'))
-        );
+        $fields = $completePayload->get('clarification');
+
+        if (is_array($fields)) {
+            return $this->generateHash(
+                $completePayload->get('general.payment_id'),
+                array_keys($completePayload->get('clarification'))
+            );
+        }
+
+        return null;
     }
 
     private function generateHash(string $paymentId, array $fieldKeys): string

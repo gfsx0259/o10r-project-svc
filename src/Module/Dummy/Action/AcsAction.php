@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Dummy\Action;
 
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\State;
 
 /**
  * ACS redirect action. Use `MD` param to identify action.
@@ -21,7 +22,7 @@ use App\Module\Dummy\Collection\ArrayCollection;
  */
 readonly class AcsAction implements ActionInterface
 {
-    public function resolveAcceptedKey(ArrayCollection $callback): ?string
+    public function resolveAcceptedKey(ArrayCollection $callback, State $state): ?string
     {
         return $callback->get('acs.redirect.body.md');
     }

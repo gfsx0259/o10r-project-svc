@@ -28,8 +28,8 @@ final readonly class CallbackProcessor
         $collection = new ArrayCollection($state->findCurrentCallback());
         $collection = $this->overrideProcessor->process($collection, $state);
 
-        if ($action = $this->actionPicker->pickAccepted($collection)) {
-            $actionKey = $action->resolveAcceptedKey($collection);
+        if ($action = $this->actionPicker->pickAccepted($collection, $state)) {
+            $actionKey = $action->resolveAcceptedKey($collection, $state);
 
             if ($state->isActionCompleted($actionKey)) {
                 $this->next($state);

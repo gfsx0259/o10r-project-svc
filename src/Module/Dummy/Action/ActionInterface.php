@@ -3,6 +3,7 @@
 namespace App\Module\Dummy\Action;
 
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\State;
 
 interface ActionInterface
 {
@@ -12,7 +13,7 @@ interface ActionInterface
      * @param ArrayCollection $callback
      * @return string|null
      */
-    public function resolveAcceptedKey(ArrayCollection $callback): ?string;
+    public function resolveAcceptedKey(ArrayCollection $callback, State $state): ?string;
 
     /**
      * Check complete action request and find suitable action, if successfully - use them to complete previously registered action

@@ -340,7 +340,11 @@ class DummyController
         #[RouteArgument('page')]
         string $page
     ): ResponseInterface {
-        $payload = $requestProvider->get()->getParsedBody();
+        $request = $requestProvider->get();
+        $payload = array_merge(
+            $request->getQueryParams() ?? [],
+            $request->getParsedBody() ?? []
+        );
 
         $redirectTo = $_ENV['DUMMY_UI_HOST'] . $urlGenerator->generate('action/dummy', ['page' => $page], $payload);
 
