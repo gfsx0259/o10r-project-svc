@@ -14,6 +14,7 @@ use App\Repository\ProjectSettingRepository;
 use App\Service\ProjectMethodService;
 use App\Service\ProjectService;
 use App\Service\ProjectSettingService;
+use App\Service\SessionService;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\Parameter;
 use OpenApi\Attributes\Schema;
@@ -329,5 +330,84 @@ final readonly class ProjectController
         $this->projectSettingService->updateSettings($projectId, $payload);
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+    #[OA\Post(
+        path: '/project/{projectId}/session',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['amount', 'currency', 'paymentId'],
+                properties: [
+                    new OA\Property(property: 'amount', type: 'number', example: "1000"),
+                    new OA\Property(property: 'currency', type: 'string', example: "RUB"),
+                    new OA\Property(property: 'paymentId', type: 'string', example: "TEST_123456"),
+                ],
+                type: 'object'
+            )
+        ),
+        tags: ['project'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Return session id fo payment page',
+                content: new OA\JsonContent(
+                    allOf: [
+                        new Schema(ref: '#/components/schemas/Response'),
+                        new Schema(
+                            properties: [
+                                new OA\Property(
+                                    property: 'data',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'sid',
+                                            type: 'string',
+                                            example: 'abc123'
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Project not found'
+            )
+        ]
+    )]
+    #[Parameter(
+        parameter: 'projectId',
+        name: 'projectId',
+        description: 'Project Id',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'integer'),
+        example: 1,
+    )]
+    public function makeSession(
+        SessionService $sessionService,
+        RequestProviderInterface $requestProvider,
+        DataResponseFactoryInterface $responseFactory,
+        #[RouteArgument('projectId')]
+        int $projectId,
+    ): ResponseInterface {
+        $payload = $requestProvider->get()->getParsedBody();
+        $project = $this->projectRepository->findByPK($projectId);
+
+        if ($project) {
+            $sid = $sessionService->makeSession(
+                $projectId,
+                $payload['paymentId'],
+                $payload['amount'],
+                $payload['currency']
+            );
+
+            return $responseFactory->createResponse(['sid' => $sid], Status::CREATED);
+        }
+
+        return $responseFactory->createResponse(null, Status::NOT_FOUND);
     }
 }

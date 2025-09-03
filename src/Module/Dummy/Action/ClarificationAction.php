@@ -17,7 +17,7 @@ readonly class ClarificationAction implements ActionInterface
     {
         if ($callback->get('clarification')) {
             return $this->generateHash(
-                $callback->get('general.payment_id'),
+                $state->getPaymentId(),
                 array_keys($callback->get('clarification'))
             );
         }

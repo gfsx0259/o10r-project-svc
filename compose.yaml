@@ -6,6 +6,7 @@ services:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
     extra_hosts:
+        - "session.o10r.io:host-gateway"
         - "host.docker.internal:host-gateway"
     dns:
         - 8.8.8.8

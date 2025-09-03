@@ -95,6 +95,9 @@ return [
     Route::patch('/project/{projectId}/setting')
         ->action([ProjectController::class, 'updateSettings']),
 
+    Route::post('/project/{projectId}/session')
+        ->action([ProjectController::class, 'makeSession']),
+
     Route::get('/aggregation/payment-page/{projectHash}')
         ->action([AggregationController::class, 'paymentPage']),
 

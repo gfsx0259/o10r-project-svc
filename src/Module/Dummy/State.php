@@ -78,8 +78,10 @@ final class State
         $this->cursor += 1;
     }
 
-    public function registerAction(string $key): self
+    public function registerAction(string $hash): self
     {
+        $key = $this->buildActionKey($hash);
+
         if (!isset($this->actions[$key])) {
             $this->actions[$key] = false;
         }
@@ -87,15 +89,19 @@ final class State
         return $this;
     }
 
-    public function completeAction(string $key): self
+    public function completeAction(string $hash): self
     {
+        $key = $this->buildActionKey($hash);
+
         $this->actions[$key] = true;
 
         return $this;
     }
 
-    public function isActionCompleted(string $key): bool
+    public function isActionCompleted(string $hash): bool
     {
+        $key = $this->buildActionKey($hash);
+
         return ($this->actions[$key] ?? false) === true;
     }
 
@@ -114,5 +120,10 @@ final class State
         $callbacks = $this->callbacks;
 
         return $callbacks[$this->cursor] ?? end($callbacks);
+    }
+
+    private function buildActionKey(string $hash): string
+    {
+        return md5($this->cursor . '_' . $hash);
     }
 }
