@@ -342,6 +342,7 @@ final readonly class ProjectController
                     new OA\Property(property: 'amount', type: 'number', example: "1000"),
                     new OA\Property(property: 'currency', type: 'string', example: "RUB"),
                     new OA\Property(property: 'paymentId', type: 'string', example: "TEST_123456"),
+                    new OA\Property(property: 'customerId', type: 'number', example: "1"),
                 ],
                 type: 'object'
             )
@@ -402,7 +403,9 @@ final readonly class ProjectController
                 $projectId,
                 $payload['paymentId'],
                 $payload['amount'],
-                $payload['currency']
+                $payload['currency'],
+                $payload['paymentDescription'] ?? null,
+                $payload['customerId'] ?? null,
             );
 
             return $responseFactory->createResponse(['sid' => $sid], Status::CREATED);

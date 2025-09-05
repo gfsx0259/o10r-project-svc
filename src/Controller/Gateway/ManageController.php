@@ -7,15 +7,19 @@ namespace App\Controller\Gateway;
 use App\Dto\Gateway\CallbackDto;
 use App\Dto\Gateway\RouteDto;
 use App\Dto\Gateway\ScenarioDto;
+use App\Dto\Gateway\StaticRouteDto;
 use App\Entity\Gateway\Callback;
 use App\Entity\Gateway\Route;
 use App\Entity\Gateway\Scenario;
+use App\Entity\Gateway\StaticRoute;
 use App\Repository\CallbackRepository;
 use App\Repository\RouteRepository;
 use App\Repository\ScenarioRepository;
+use App\Repository\StaticRouteRepository;
 use App\Service\GatewayCallbackService;
 use App\Service\GatewayRouteService;
 use App\Service\GatewayScenarioService;
+use Cycle\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use OpenApi\Attributes\Parameter;
@@ -38,6 +42,7 @@ readonly class ManageController
         private RouteRepository $routeRepository,
         private ScenarioRepository $scenarioRepository,
         private CallbackRepository $callbackRepository,
+        private StaticRouteRepository $staticRouteRepository,
     ) {}
 
     #[OA\Get(
@@ -529,6 +534,189 @@ readonly class ManageController
         int $callbackId
     ): ResponseInterface {
         $gatewayCallbackService->delete($callbackId);
+
+        return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+
+    #[OA\Get(
+        path: '/gateway/static',
+        description: '',
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(
+                response:'200',
+                description:'Success',
+                content: new OA\JsonContent(
+                    allOf: [
+                        new OA\Schema(ref: '#/components/schemas/Response'),
+                        new OA\Schema(properties: [
+                            new OA\Property(
+                                property: 'data',
+                                type: 'array',
+                                items: new OA\Items(ref: '#/components/schemas/StaticRoute'),
+                            ),
+                        ]),
+                    ]
+                ),
+            ),
+        ]
+    )]
+    public function getStaticRoutes(DataResponseFactoryInterface $responseFactory): ResponseInterface
+    {
+        $routes = $this->staticRouteRepository->findAll();
+
+        $routesDto = array_map(
+            fn (StaticRoute $route) => new StaticRouteDto(
+                $route->getId(),
+                $route->getScenarioId(),
+                $route->getPath(),
+                $route->getBody(),
+            ),
+            $routes,
+        );
+
+        return $responseFactory->createResponse($routesDto);
+    }
+
+    #[OA\Post(
+        path: '/gateway/static',
+        description: '',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                ref: '#/components/schemas/StaticRouteCreate',
+                type: 'object',
+            )
+        ),
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(
+                response: '204',
+                description: 'Created',
+                content: new JsonContent(
+                    allOf: [
+                        new OA\Schema(ref: '#/components/schemas/Response'),
+                        new OA\Schema(
+                            properties: [
+                                new OA\Property(
+                                    property: 'data',
+                                    ref: '#/components/schemas/StaticRoute',
+                                    type: 'object'
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        ]
+    )]
+    public function createStaticRoute(
+        DataResponseFactoryInterface $responseFactory,
+        EntityManagerInterface $entityManager,
+        RequestProviderInterface $requestProvider,
+    ): ResponseInterface {
+        $payload = $requestProvider->get()->getParsedBody();
+
+        $route = new StaticRoute();
+        $route->setScenarioId((int)$payload['scenario_id']);
+        $route->setPath($payload['path']);
+        $route->setBody($payload['body']);
+
+        $entityManager->persist($route)->run();
+
+        return $responseFactory->createResponse([
+            'id' => $route->getId(),
+            'scenario_id' => $route->getScenarioId(),
+            'path' => $route->getPath(),
+            'body' => $route->getBody(),
+        ], Status::CREATED);
+    }
+
+    #[OA\Patch(
+        path: '/gateway/static/{staticId}',
+        description: '',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                ref: '#/components/schemas/StaticRouteCreate',
+                type: 'object',
+            )
+        ),
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(
+                response: '204',
+                description: 'Created',
+                content: new JsonContent(
+                    allOf: [
+                        new Schema(ref: '#/components/schemas/Response'),
+                    ]
+                )
+            )
+        ]
+    )]
+    #[Parameter(
+        parameter: 'staticId',
+        name: 'staticId',
+        description: 'Static Route Id',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'integer'),
+        example: 11,
+    )]
+    public function updateStaticRoute(
+        DataResponseFactoryInterface $responseFactory,
+        EntityManagerInterface $entityManager,
+        RequestProviderInterface $requestProvider,
+        #[RouteArgument('staticId')]
+        int $staticId
+    ): ResponseInterface {
+        $payload = $requestProvider->get()->getParsedBody();
+        $route = $this->staticRouteRepository->findByPK($staticId);
+
+        if ($route) {
+            $route->setScenarioId((int)$payload['scenario_id']);
+            $route->setPath($payload['path']);
+            $route->setBody($payload['body']);
+
+            $entityManager->persist($route)->run();
+        }
+
+        return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+    #[OA\Delete(
+        path: '/gateway/static/{staticId}',
+        description: '',
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(
+                response: '204',
+                description: 'Created',
+            )
+        ]
+    )]
+    #[Parameter(
+        parameter: 'staticId',
+        name: 'staticId',
+        description: 'Static Route Id',
+        in: 'path',
+        required: true,
+        schema: new Schema(type: 'integer'),
+        example: 11,
+    )]
+    public function deleteStaticRoute(
+        DataResponseFactoryInterface $responseFactory,
+        EntityManagerInterface $entityManager,
+        #[RouteArgument('staticId')]
+        int $staticId
+    ): ResponseInterface {
+        $route = $this->staticRouteRepository->findByPK($staticId);
+
+        if ($route) {
+            $entityManager->delete($route)->run();
+        }
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
     }

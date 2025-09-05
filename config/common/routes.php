@@ -75,6 +75,21 @@ return [
     Route::delete('/gateway/callback/{callbackId}')
         ->action([ManageController::class, 'deleteCallback']),
 
+    Route::get('/gateway/static')
+        ->action([ManageController::class, 'getStaticRoutes']),
+
+    Route::post('/gateway/static')
+        ->action([ManageController::class, 'createStaticRoute']),
+
+    Route::patch('/gateway/static/{staticId}')
+        ->action([ManageController::class, 'updateStaticRoute']),
+
+    Route::delete('/gateway/static/{staticId}')
+        ->action([ManageController::class, 'deleteStaticRoute']),
+
+    Route::get('/gateway{path:.+}')
+        ->action([DummyController::class, 'staticRoute']),
+
 
     Route::get('/project')
         ->middleware(SessionMiddleware::class)

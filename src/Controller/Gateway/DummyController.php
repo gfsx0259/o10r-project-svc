@@ -16,6 +16,7 @@ use App\Module\Dummy\StateManager;
 use App\Repository\MethodRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\RouteRepository;
+use App\Repository\StaticRouteRepository;
 use LogicException;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
@@ -351,5 +352,22 @@ class DummyController
         return $responseFactory
             ->createResponse(code: 302)
             ->withHeader('Location', $redirectTo);
+    }
+
+    public function staticRoute(
+        DataResponseFactoryInterface $responseFactory,
+        StaticRouteRepository $staticRouteRepository,
+        #[RouteArgument('path')]
+        string $path
+    ): ResponseInterface {
+        $route = $staticRouteRepository->findOne(['path' => $path]);
+
+        if (!$route) {
+            return $responseFactory->createResponse([], Status::NOT_FOUND);
+        }
+
+        $body = json_decode($route->getBody(), true);
+
+        return $responseFactory->createResponse($body);
     }
 }

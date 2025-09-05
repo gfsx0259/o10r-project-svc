@@ -18,26 +18,30 @@ class SessionService
         ]);
     }
 
-    public function makeSession(int $projectId, string $paymentId, int $amount, string $currency): string
+    public function makeSession(int $projectId, string $paymentId, int $amount, string $currency, ?string $paymentDescription, ?int $customerId): string
     {
-        $content = $this->httpClient->post(
-            '/v1/session',
-            [
-                'json' => [
-                    'general' => [
-                        'project_id' => $projectId,
-                        'payment_id' => $paymentId,
-                    ],
-                    'payment' => [
-                        'amount' => $amount,
-                        'currency' => $currency,
-                    ]
-                ],
+        $data = [
+            'general' => [
+                'project_id' => $projectId,
+                'payment_id' => $paymentId,
+            ],
+            'payment' => [
+                'amount' => $amount,
+                'currency' => $currency,
             ]
-        )->getBody()->getContents();
+        ];
 
-        $data = json_decode($content, true);
+        if ($paymentDescription) {
+            $data['payment']['description'] = $paymentDescription;
+        }
 
-        return $data['data']['client_secret'];
+        if ($customerId) {
+            $data['customer'] = ['id' => $customerId];
+        }
+
+        $content = $this->httpClient->post('/v1/session', [ 'json' => $data ])->getBody()->getContents();
+        $response = json_decode($content, true);
+
+        return $response['data']['client_secret'];
     }
 }
