@@ -1,0 +1,22 @@
+{
+    "acs": {
+        "iframe": {
+            "url": "{{ACS_URL}}",
+            "body": {
+                "3DSMethodData": "string",
+                "threeDSMethodData": "string"
+            },
+            "method": "POST"
+        }
+    },
+    "account": {
+        "number": "4242 **** **** **42",
+        "card_holder": "FDSA FDASF",
+        "expiry_year": "33",
+        "expiry_month": "01"
+    },
+    "payment": {
+        "status": "awaiting 3ds result",
+        "method_code": "{{METHOD_CODE}}"
+    }
+}

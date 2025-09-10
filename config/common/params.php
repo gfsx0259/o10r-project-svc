@@ -28,6 +28,7 @@ return [
             '@tests' => '@root/tests',
             '@views' => '@root/views',
             '@vendor' => '@root/vendor',
+            '@fixture' => '@root/fixture',
         ],
     ],
 

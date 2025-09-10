@@ -1,0 +1,46 @@
+[
+    {
+        "name": "pan",
+        "type": "tel",
+        "validation": {
+            "pan": [],
+            "required": []
+        }
+    },
+    {
+        "name": "expiry_month",
+        "type": "tel",
+        "validation": {
+            "required": [],
+            "expiry_month": []
+        }
+    },
+    {
+        "name": "expiry_year",
+        "type": "tel",
+        "validation": {
+            "required": [],
+            "expiry_year": [
+                "expiry_month"
+            ]
+        }
+    },
+    {
+        "name": "cvv",
+        "type": "password",
+        "validation": {
+            "cvv": [
+                "pan"
+            ],
+            "required": []
+        }
+    },
+    {
+        "name": "cardholder",
+        "type": "text",
+        "validation": {
+            "required": [],
+            "cardholder": []
+        }
+    }
+]

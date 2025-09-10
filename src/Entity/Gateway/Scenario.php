@@ -13,13 +13,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repository: ScenarioRepository::class, table: 'scenario', readonlySchema: true)]
 #[Column(type: 'primary', name: 'id')]
-#[Column(type: 'integer', name: 'route_id', property: 'routeId')]
+#[Column(type: 'integer', name: 'route_id')]
 #[Column(type: 'string', name: 'title')]
 #[Column(type: 'json', name: 'conditions')]
 class Scenario implements SpecificationEntityInterface
 {
     private int $id;
-    private int $routeId;
+    private int $route_id;
     private string $conditions;
     private string $title;
 
@@ -42,17 +42,12 @@ class Scenario implements SpecificationEntityInterface
 
     public function getRouteId(): int
     {
-        return $this->routeId;
+        return $this->route_id;
     }
 
     public function getConditions(): string
     {
         return $this->conditions;
-    }
-
-    public function setRouteId(int $routeId): void
-    {
-        $this->routeId = $routeId;
     }
 
     public function setConditions(string $conditions): void
@@ -78,5 +73,10 @@ class Scenario implements SpecificationEntityInterface
     public function getCallbacks(): ArrayCollection
     {
         return $this->callbacks;
+    }
+
+    public function addCallback(Callback $callback): void
+    {
+        $this->callbacks->add($callback);
     }
 }

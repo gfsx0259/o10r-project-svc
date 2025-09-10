@@ -2,4 +2,12 @@
 
 declare(strict_types=1);
 
-return [];
+use App\Command\FixtureCommand;
+
+return [
+    'yiisoft/yii-console' => [
+        'commands' => [
+            'fixture:load' => FixtureCommand::class,
+        ]
+    ]
+];

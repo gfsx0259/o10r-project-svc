@@ -1,0 +1,24 @@
+{
+    "acs": {
+        "redirect": {
+            "url": "{{ACS_URL}}",
+            "body": {
+                "md": "{{MD}}",
+                "pa_req": "string",
+                "term_url": "{{TERM_URL}}"
+            },
+            "method": "POST"
+        },
+        "is_cascading": true
+    },
+    "account": {
+        "number": "4242 **** **** **42",
+        "card_holder": "FDSA FDASF",
+        "expiry_year": "33",
+        "expiry_month": "01"
+    },
+    "payment": {
+        "status": "awaiting 3ds result",
+        "method_code": "{{METHOD_CODE}}"
+    }
+}

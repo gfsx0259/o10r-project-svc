@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "last_four_digits": "4211",
+        "type": "visa",
+        "expiry_month": "11",
+        "expiry_year": "25"
+    },
+    {
+        "id": 2,
+        "last_four_digits": "1233",
+        "type": "mastercard",
+        "expiry_month": "09",
+        "expiry_year": "26"
+    },
+    {
+        "id": 3,
+        "last_four_digits": "3781",
+        "type": "visa",
+        "expiry_month": "01",
+        "expiry_year": "25"
+    }
+]

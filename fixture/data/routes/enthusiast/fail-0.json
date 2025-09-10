@@ -1,0 +1,12 @@
+{
+    "aps": {
+        "redirect": {
+            "url": "{{APS_URL}}",
+            "method": "GET"
+        }
+    },
+    "payment": {
+        "status": "awaiting redirect result",
+        "method_code": "{{METHOD_CODE}}"
+    }
+}

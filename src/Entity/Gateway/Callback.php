@@ -10,13 +10,13 @@ use Cycle\Annotated\Annotation\Entity;
 
 #[Entity(repository: CallbackRepository::class, table: 'callback', readonlySchema: true)]
 #[Column(type: 'primary', name: 'id')]
-#[Column(type: 'integer', name: 'scenario_id', property: 'scenarioId')]
+#[Column(type: 'integer', name: 'scenario_id')]
 #[Column(type: 'json', name: 'body')]
 #[Column(type: 'tinyInteger', name: 'order')]
 class Callback
 {
     private int $id;
-    private int $scenarioId;
+    private int $scenario_id;
     private string $body;
     private int $order;
 
@@ -27,12 +27,12 @@ class Callback
 
     public function getScenarioId(): int
     {
-        return $this->scenarioId;
+        return $this->scenario_id;
     }
 
     public function setScenarioId(int $scenarioId): void
     {
-        $this->scenarioId = $scenarioId;
+        $this->scenario_id = $scenarioId;
     }
 
     public function getBody(): string
