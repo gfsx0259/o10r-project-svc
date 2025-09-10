@@ -12,6 +12,7 @@ use App\Entity\Gateway\Callback;
 use App\Entity\Gateway\Route;
 use App\Entity\Gateway\Scenario;
 use App\Entity\Gateway\StaticRoute;
+use App\Module\Dummy\ModeManager;
 use App\Repository\CallbackRepository;
 use App\Repository\RouteRepository;
 use App\Repository\ScenarioRepository;
@@ -237,7 +238,6 @@ readonly class ManageController
                 $scenario->getId(),
                 $scenario->getRouteId(),
                 $scenario->getTitle(),
-                $scenario->getConditions(),
             ),
             $scenarios,
         );
@@ -290,7 +290,6 @@ readonly class ManageController
             'id' => $scenario->getId(),
             'title' => $scenario->getTitle(),
             'route_id' => $scenario->getRouteId(),
-            'conditions' => $scenario->getConditions(),
         ], Status::CREATED);
     }
 
@@ -569,7 +568,7 @@ readonly class ManageController
         $routesDto = array_map(
             fn (StaticRoute $route) => new StaticRouteDto(
                 $route->getId(),
-                $route->getScenarioId(),
+                $route->getName(),
                 $route->getPath(),
                 $route->getBody(),
             ),
@@ -619,7 +618,7 @@ readonly class ManageController
         $payload = $requestProvider->get()->getParsedBody();
 
         $route = new StaticRoute();
-        $route->setScenarioId((int)$payload['scenario_id']);
+        $route->setName($payload['name']);
         $route->setPath($payload['path']);
         $route->setBody($payload['body']);
 
@@ -627,7 +626,7 @@ readonly class ManageController
 
         return $responseFactory->createResponse([
             'id' => $route->getId(),
-            'scenario_id' => $route->getScenarioId(),
+            'name' => $route->getName(),
             'path' => $route->getPath(),
             'body' => $route->getBody(),
         ], Status::CREATED);
@@ -676,7 +675,7 @@ readonly class ManageController
         $route = $this->staticRouteRepository->findByPK($staticId);
 
         if ($route) {
-            $route->setScenarioId((int)$payload['scenario_id']);
+            $route->setName($payload['name']);
             $route->setPath($payload['path']);
             $route->setBody($payload['body']);
 
@@ -719,5 +718,61 @@ readonly class ManageController
         }
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+    #[OA\Post(
+        path: '/gateway/mode',
+        description: 'Enables concrete scenarios of mock',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/Mode')
+        ),
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(response: 204, description: 'Enabled'),
+        ]
+    )]
+    public function setMode(
+        DataResponseFactoryInterface $responseFactory,
+        RequestProviderInterface $requestProvider,
+        ModeManager $modeManager,
+    ): ResponseInterface {
+        $payload = $requestProvider->get()->getParsedBody();
+
+        $modeManager->set((int)$payload['scenarioId'], $payload['staticRoutesIds'] ?? []);
+
+        return $responseFactory->createResponse(null, Status::NO_CONTENT);
+    }
+
+    #[OA\Get(
+        path: '/gateway/mode',
+        description: 'Get current scenario of mock',
+        tags: ['gateway/manage'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Current mode',
+                content: new OA\JsonContent(ref: '#/components/schemas/Mode')
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Not found'
+            ),
+        ]
+    )]
+    public function getMode(
+        DataResponseFactoryInterface $responseFactory,
+        ModeManager $modeManager,
+    ): ResponseInterface {
+        $mode = $modeManager->get();
+
+        if ($mode) {
+            return $responseFactory->createResponse([
+                'scenarioId' => $mode->getScenarioId(),
+                'staticRoutesIds' => $mode->getStaticRoutesIds(),
+            ]);
+        }
+
+        return $responseFactory->createResponse(null, Status::NOT_FOUND);
     }
 }

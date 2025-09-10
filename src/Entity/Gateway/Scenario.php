@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity\Gateway;
 
-use App\Module\Dummy\Specification\SpecificationEntityInterface;
 use App\Repository\ScenarioRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -15,12 +14,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 #[Column(type: 'primary', name: 'id')]
 #[Column(type: 'integer', name: 'route_id', property: 'routeId')]
 #[Column(type: 'string', name: 'title')]
-#[Column(type: 'json', name: 'conditions')]
-class Scenario implements SpecificationEntityInterface
+class Scenario
 {
     private int $id;
     private int $routeId;
-    private string $conditions;
     private string $title;
 
     #[HasMany(
@@ -45,19 +42,9 @@ class Scenario implements SpecificationEntityInterface
         return $this->routeId;
     }
 
-    public function getConditions(): string
-    {
-        return $this->conditions;
-    }
-
     public function setRouteId(int $routeId): void
     {
         $this->routeId = $routeId;
-    }
-
-    public function setConditions(string $conditions): void
-    {
-        $this->conditions = $conditions;
     }
 
     public function getTitle(): string
@@ -68,11 +55,6 @@ class Scenario implements SpecificationEntityInterface
     public function setTitle(string $title): void
     {
         $this->title = $title;
-    }
-
-    public function getSpecification(): array
-    {
-        return json_decode($this->conditions, true);
     }
 
     public function getCallbacks(): ArrayCollection

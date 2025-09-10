@@ -87,7 +87,16 @@ return [
     Route::delete('/gateway/static/{staticId}')
         ->action([ManageController::class, 'deleteStaticRoute']),
 
+    Route::post('/gateway/mode')
+        ->action([ManageController::class, 'setMode']),
+
+    Route::get('/gateway/mode')
+        ->action([ManageController::class, 'getMode']),
+
     Route::get('/gateway{path:.+}')
+        ->action([DummyController::class, 'staticRoute']),
+
+    Route::post('/gateway{path:.+}')
         ->action([DummyController::class, 'staticRoute']),
 
 

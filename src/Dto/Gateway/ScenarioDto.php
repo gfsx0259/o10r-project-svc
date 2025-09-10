@@ -12,7 +12,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'id', type: 'integer', example: 1),
         new OA\Property(property: 'route_id', type: 'integer', example: 1),
         new OA\Property(property: 'title', type: 'string', example: 'Successfully scenario'),
-        new OA\Property(property: 'conditions', type: 'string', example: '{}'),
     ],
     type: 'object'
 )]
@@ -21,7 +20,6 @@ use OpenApi\Attributes as OA;
     properties: [
         new OA\Property(property: 'route_id', type: 'integer', example: 1),
         new OA\Property(property: 'title', type: 'string', example: 'Successfully scenario'),
-        new OA\Property(property: 'conditions', type: 'string', example: '{}'),
     ],
     type: 'object'
 )]
@@ -31,6 +29,5 @@ final readonly class ScenarioDto
         public int $id,
         public int $route_id,
         public string $title,
-        public string $conditions,
     ) {}
 }

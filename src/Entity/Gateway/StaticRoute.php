@@ -10,13 +10,13 @@ use Cycle\Annotated\Annotation\Entity;
 
 #[Entity(repository: StaticRouteRepository::class, table: 'static', readonlySchema: true)]
 #[Column(type: 'primary', name: 'id')]
-#[Column(type: 'integer', name: 'scenario_id', property: 'scenarioId')]
+#[Column(type: 'string', name: 'name')]
 #[Column(type: 'string', name: 'path')]
 #[Column(type: 'json', name: 'body')]
 class StaticRoute
 {
     private int $id;
-    private int $scenarioId;
+    private string $name;
     private string $path;
     private string $body;
 
@@ -25,14 +25,14 @@ class StaticRoute
         return $this->id;
     }
 
-    public function getScenarioId(): int
+    public function getName(): string
     {
-        return $this->scenarioId;
+        return $this->name;
     }
 
-    public function setScenarioId(int $scenarioId): void
+    public function setName(string $name): void
     {
-        $this->scenarioId = $scenarioId;
+        $this->name = $name;
     }
 
     public function getPath(): string

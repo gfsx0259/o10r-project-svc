@@ -23,7 +23,6 @@ final readonly class GatewayScenarioService
 
         $scenario->setTitle($payload['title']);
         $scenario->setRouteId($payload['route_id']);
-        $scenario->setConditions($payload['conditions']);
 
         $this->entityManager->persist($scenario)->run();
 

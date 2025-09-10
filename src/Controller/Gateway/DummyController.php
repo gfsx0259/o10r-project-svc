@@ -11,6 +11,7 @@ use App\Module\Dummy\Action\ApsAction;
 use App\Module\Dummy\Callback\CallbackCollectionProvider;
 use App\Module\Dummy\Callback\CallbackProcessor;
 use App\Module\Dummy\Collection\ArrayCollection;
+use App\Module\Dummy\ModeManager;
 use App\Module\Dummy\State;
 use App\Module\Dummy\StateManager;
 use App\Repository\MethodRepository;
@@ -190,7 +191,7 @@ class DummyController
             $paymentId,
             $route->getId(),
             $initialRequest->data,
-            $callbackCollectionProvider->provide($route->getId(), $initialRequest->data)
+            $callbackCollectionProvider->provide($route->getId())
         );
 
         $stateManager->save($state);
@@ -357,12 +358,14 @@ class DummyController
     public function staticRoute(
         DataResponseFactoryInterface $responseFactory,
         StaticRouteRepository $staticRouteRepository,
+        ModeManager $modeManager,
         #[RouteArgument('path')]
         string $path
     ): ResponseInterface {
         $route = $staticRouteRepository->findOne(['path' => $path]);
+        $mode = $modeManager->get();
 
-        if (!$route) {
+        if (!$route || !($mode && in_array($route->getId(), $mode->getStaticRoutesIds()))) {
             return $responseFactory->createResponse([], Status::NOT_FOUND);
         }
 
