@@ -15,7 +15,6 @@ class OrmDefaultF5844fca00ffb8bad6b877b3c0a80cf5 extends Migration
         $this->table('route')
             ->addColumn('id', 'primary')
             ->addColumn('method_id', 'integer')
-            ->addColumn('conditions', 'json')
             ->create();
 
         $this->table('scenario')

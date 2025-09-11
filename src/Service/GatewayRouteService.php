@@ -22,7 +22,6 @@ final readonly class GatewayRouteService
             : new Route();
 
         $route->setMethodId($payload['method_id']);
-        $route->setConditions($payload['conditions']);
 
         $this->entityManager->persist($route)->run();
 

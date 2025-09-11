@@ -74,7 +74,7 @@ readonly class ManageController
         $routes = $this->routeRepository->findAll();
 
         $routesDto = array_map(
-            fn (Route $route) => new RouteDto($route->getId(), $route->getMethodId(), $route->getConditions()),
+            fn (Route $route) => new RouteDto($route->getId(), $route->getMethodId()),
             $routes,
         );
 
@@ -125,7 +125,6 @@ readonly class ManageController
         return $responseFactory->createResponse([
             'id' => $route->getId(),
             'method_id' => $route->getMethodId(),
-            'conditions' => $route->getConditions(),
         ], Status::CREATED);
     }
 

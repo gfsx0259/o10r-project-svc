@@ -11,7 +11,6 @@ use OpenApi\Attributes as OA;
     properties: [
         new OA\Property(property: 'id', type: 'integer', example: 1),
         new OA\Property(property: 'method_id', type: 'integer', example: 1),
-        new OA\Property(property: 'conditions', type: 'string', example: '{}'),
     ],
     type: 'object'
 )]
@@ -19,7 +18,6 @@ use OpenApi\Attributes as OA;
     schema: 'RouteCreate',
     properties: [
         new OA\Property(property: 'method_id', type: 'integer', example: 1),
-        new OA\Property(property: 'conditions', type: 'string', example: '{}'),
     ],
     type: 'object'
 )]
@@ -28,6 +26,5 @@ final readonly class RouteDto
     public function __construct(
         public int $id,
         public int $method_id,
-        public string $conditions,
     ) {}
 }
