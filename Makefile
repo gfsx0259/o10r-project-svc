@@ -4,7 +4,9 @@
 export UID=$(shell id -u)
 export GID=$(shell id -g)
 
-start: env up composer migrate
+.PHONY: start env up composer migrate fixture
+
+start: env up composer migrate fixture
 
 env:
 	@if [ ! -f .env ]; then cp .env.example .env; fi
@@ -17,3 +19,6 @@ composer:
 
 migrate:
 	docker compose exec project php yii migrate:up -q
+
+fixture:
+	docker compose exec project php yii fixture:load

@@ -43,8 +43,6 @@ final readonly class ProjectSettingService
                 $this->entityManager->persist($newSetting);
             }
         }
-
-        $project->setHash(Random::generate(32));
         $this->entityManager->persist($project)->run();
     }
 }
