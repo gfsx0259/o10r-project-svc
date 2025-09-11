@@ -3,7 +3,7 @@
 namespace App\Module\Dummy\Callback;
 
 use App\Entity\Gateway\Callback;
-use App\Module\Dummy\ModeManager;
+use App\Module\Dummy\ActiveScenarioManager;
 use App\Repository\ScenarioRepository;
 
 /**
@@ -14,18 +14,18 @@ final readonly class CallbackCollectionProvider
 {
     public function __construct(
         private ScenarioRepository $scenarioRepository,
-        private ModeManager $modeManager,
+        private ActiveScenarioManager $activeScenarioManager,
     ) {}
 
     public function provide(int $routeId): array
     {
         $scenarios = $this->scenarioRepository->findByRoute($routeId);
         $currentScenario = $scenarios[0];
-        $mode = $this->modeManager->get();
+        $activeScenario = $this->activeScenarioManager->get();
 
-        if ($mode) {
+        if ($activeScenario) {
             foreach ($scenarios as $scenario) {
-                if ($scenario->getId() === $mode->getScenarioId()) {
+                if ($scenario->getId() === $activeScenario->getScenarioId()) {
                     $currentScenario = $scenario;
                     break;
                 }

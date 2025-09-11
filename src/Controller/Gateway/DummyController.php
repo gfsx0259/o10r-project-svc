@@ -11,7 +11,7 @@ use App\Module\Dummy\Action\ApsAction;
 use App\Module\Dummy\Callback\CallbackCollectionProvider;
 use App\Module\Dummy\Callback\CallbackProcessor;
 use App\Module\Dummy\Collection\ArrayCollection;
-use App\Module\Dummy\ModeManager;
+use App\Module\Dummy\ActiveScenarioManager;
 use App\Module\Dummy\State;
 use App\Module\Dummy\StateManager;
 use App\Repository\MethodRepository;
@@ -358,19 +358,26 @@ class DummyController
     public function staticRoute(
         DataResponseFactoryInterface $responseFactory,
         StaticRouteRepository $staticRouteRepository,
-        ModeManager $modeManager,
+        ActiveScenarioManager $activeScenarioManager,
         #[RouteArgument('path')]
         string $path
     ): ResponseInterface {
-        $route = $staticRouteRepository->findOne(['path' => $path]);
-        $mode = $modeManager->get();
+        $activeScenario = $activeScenarioManager->get();
+        $enabledIds = $activeScenario?->getStaticRoutesIds() ?? [];
 
-        if (!$route || !($mode && in_array($route->getId(), $mode->getStaticRoutesIds()))) {
-            return $responseFactory->createResponse([], Status::NOT_FOUND);
+        if (count($enabledIds)) {
+            $route = $staticRouteRepository->findOne([
+                'id' => ['in' => $enabledIds],
+                'path' => $path,
+            ]);
+
+            if ($route) {
+                $body = json_decode($route->getBody(), true);
+
+                return $responseFactory->createResponse($body);
+            }
         }
 
-        $body = json_decode($route->getBody(), true);
-
-        return $responseFactory->createResponse($body);
+        return $responseFactory->createResponse([], Status::NOT_FOUND);
     }
 }

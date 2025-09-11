@@ -12,7 +12,7 @@ use App\Entity\Gateway\Callback;
 use App\Entity\Gateway\Route;
 use App\Entity\Gateway\Scenario;
 use App\Entity\Gateway\StaticRoute;
-use App\Module\Dummy\ModeManager;
+use App\Module\Dummy\ActiveScenarioManager;
 use App\Repository\CallbackRepository;
 use App\Repository\RouteRepository;
 use App\Repository\ScenarioRepository;
@@ -720,38 +720,38 @@ readonly class ManageController
     }
 
     #[OA\Post(
-        path: '/gateway/mode',
+        path: '/gateway/scenario/active',
         description: 'Enables concrete scenarios of mock',
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(ref: '#/components/schemas/Mode')
+            content: new OA\JsonContent(ref: '#/components/schemas/ActiveScenario')
         ),
         tags: ['gateway/manage'],
         responses: [
             new OA\Response(response: 204, description: 'Enabled'),
         ]
     )]
-    public function setMode(
+    public function setActiveScenario(
         DataResponseFactoryInterface $responseFactory,
         RequestProviderInterface $requestProvider,
-        ModeManager $modeManager,
+        ActiveScenarioManager $activeScenarioManager,
     ): ResponseInterface {
         $payload = $requestProvider->get()->getParsedBody();
 
-        $modeManager->set((int)$payload['scenarioId'], $payload['staticRoutesIds'] ?? []);
+        $activeScenarioManager->set((int)$payload['scenarioId'], $payload['staticRoutesIds'] ?? []);
 
         return $responseFactory->createResponse(null, Status::NO_CONTENT);
     }
 
     #[OA\Get(
-        path: '/gateway/mode',
+        path: '/gateway/scenario/active',
         description: 'Get current scenario of mock',
         tags: ['gateway/manage'],
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Current mode',
-                content: new OA\JsonContent(ref: '#/components/schemas/Mode')
+                description: 'Current scenario',
+                content: new OA\JsonContent(ref: '#/components/schemas/ActiveScenario')
             ),
             new OA\Response(
                 response: 404,
@@ -759,16 +759,16 @@ readonly class ManageController
             ),
         ]
     )]
-    public function getMode(
+    public function getActiveScenario(
         DataResponseFactoryInterface $responseFactory,
-        ModeManager $modeManager,
+        ActiveScenarioManager $activeScenarioManager,
     ): ResponseInterface {
-        $mode = $modeManager->get();
+        $activeScenario = $activeScenarioManager->get();
 
-        if ($mode) {
+        if ($activeScenario) {
             return $responseFactory->createResponse([
-                'scenarioId' => $mode->getScenarioId(),
-                'staticRoutesIds' => $mode->getStaticRoutesIds(),
+                'scenarioId' => $activeScenario->getScenarioId(),
+                'staticRoutesIds' => $activeScenario->getStaticRoutesIds(),
             ]);
         }
 

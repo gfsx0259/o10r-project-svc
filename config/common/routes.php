@@ -56,6 +56,12 @@ return [
     Route::post('/gateway/scenario')
         ->action([ManageController::class, 'createScenario']),
 
+    Route::post('/gateway/scenario/active')
+        ->action([ManageController::class, 'setActiveScenario']),
+
+    Route::get('/gateway/scenario/active')
+        ->action([ManageController::class, 'getActiveScenario']),
+
     Route::patch('/gateway/scenario/{scenarioId}')
         ->action([ManageController::class, 'updateScenario']),
 
@@ -85,12 +91,6 @@ return [
 
     Route::delete('/gateway/static/{staticId}')
         ->action([ManageController::class, 'deleteStaticRoute']),
-
-    Route::post('/gateway/mode')
-        ->action([ManageController::class, 'setMode']),
-
-    Route::get('/gateway/mode')
-        ->action([ManageController::class, 'getMode']),
 
     Route::get('/gateway{path:.+}')
         ->action([DummyController::class, 'staticRoute']),

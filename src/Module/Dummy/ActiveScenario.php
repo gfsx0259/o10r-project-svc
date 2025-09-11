@@ -8,7 +8,7 @@ use Yiisoft\Validator\Rule\Integer;
 use Yiisoft\Validator\Rule\Each;
 
 #[OA\Schema(
-    schema: 'Mode',
+    schema: 'ActiveScenario',
     required: ['scenarioId'],
     properties: [
         new OA\Property(
@@ -27,7 +27,7 @@ use Yiisoft\Validator\Rule\Each;
     ],
     type: 'object'
 )]
-final class Mode
+final class ActiveScenario
 {
     #[Required]
     #[Integer]
