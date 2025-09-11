@@ -16,13 +16,11 @@ use Cycle\Annotated\Annotation\Relation\HasMany;
 #[Column(type: 'string', name: 'user_id', property: 'userId')]
 #[Column(type: 'string', name: 'secret_key', property: 'secretKey')]
 #[Column(type: 'string', name: 'code')]
-#[Column(type: 'string', name: 'hash')]
 #[Column(type: 'integer', name: 'is_sandbox', property: 'isSandbox')]
 class Project
 {
     private int $id;
     private string $code;
-    private string $hash;
     private string $userId;
     private string $secretKey;
     private int $isSandbox;
@@ -67,16 +65,6 @@ class Project
     public function setCode(string $code): void
     {
         $this->code = $code;
-    }
-
-    public function getHash(): string
-    {
-        return $this->hash;
-    }
-
-    public function setHash(string $hash): void
-    {
-        $this->hash = $hash;
     }
 
     public function getUserId(): string

@@ -19,20 +19,6 @@ final class ProjectRepository extends Repository
         return $project;
     }
 
-    /**
-     * @param string $hash
-     * @return Project
-     * @throws NotFoundException
-     */
-    public function getByHash(string $hash): Project
-    {
-        if (!$project = $this->findOne(['hash' => $hash])) {
-            throw new NotFoundException();
-        }
-
-        return $project;
-    }
-
     public function findByUserId(string $userId): array
     {
         return $this->findAll(['user_id' => $userId]);
