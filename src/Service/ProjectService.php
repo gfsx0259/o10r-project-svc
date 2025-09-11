@@ -29,7 +29,6 @@ final readonly class ProjectService
         $project = new Project();
         $project->setUserId($userId);
         $project->setSecretKey(uniqid());
-        $project->setHash(Random::generate(32));
         $project->setCode($this->codeGenerator->getName());
         $project->setIsSandbox((int)$isSandbox);
 

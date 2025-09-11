@@ -104,6 +104,9 @@ class DummyController
         STATUS_SUCCESS = 'success',
         STATUS_DECLINE = 'decline';
 
+    /**
+     * @throws NotFoundException
+     */
     #[OA\Post(
         path: '/gateway/access/{projectId}',
         description: 'We should proxy merchant credentials to gateway, ensure that merchant has access to specified project. Create session if it is ok.',

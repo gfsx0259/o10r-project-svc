@@ -10,6 +10,9 @@ use Cycle\ORM\Select\Repository;
 
 final class ProjectRepository extends Repository
 {
+    /**
+     * @throws NotFoundException
+     */
     public function getById(int $id): Project
     {
         if (!$project = $this->findByPK($id)) {
