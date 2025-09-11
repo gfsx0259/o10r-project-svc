@@ -359,14 +359,14 @@ final readonly class ProjectController
                             properties: [
                                 new OA\Property(
                                     property: 'data',
-                                    type: 'object',
                                     properties: [
                                         new OA\Property(
                                             property: 'sid',
                                             type: 'string',
                                             example: 'abc123'
                                         )
-                                    ]
+                                    ],
+                                    type: 'object'
                                 )
                             ]
                         )

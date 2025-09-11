@@ -12,12 +12,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repository: ScenarioRepository::class, table: 'scenario', readonlySchema: true)]
 #[Column(type: 'primary', name: 'id')]
-#[Column(type: 'integer', name: 'route_id', property: 'routeId')]
+#[Column(type: 'integer', name: 'route_id')]
 #[Column(type: 'string', name: 'title')]
 class Scenario
 {
     private int $id;
-    private int $routeId;
+    private int $route_id;
     private string $title;
 
     #[HasMany(
@@ -39,12 +39,12 @@ class Scenario
 
     public function getRouteId(): int
     {
-        return $this->routeId;
+        return $this->route_id;
     }
 
     public function setRouteId(int $routeId): void
     {
-        $this->routeId = $routeId;
+        $this->route_id = $routeId;
     }
 
     public function getTitle(): string
@@ -60,5 +60,10 @@ class Scenario
     public function getCallbacks(): ArrayCollection
     {
         return $this->callbacks;
+    }
+
+    public function addCallback(Callback $callback): void
+    {
+        $this->callbacks->add($callback);
     }
 }

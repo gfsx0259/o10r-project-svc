@@ -7,6 +7,8 @@ namespace App\Entity\Gateway;
 use App\Repository\RouteRepository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Relation\HasMany;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repository: RouteRepository::class, table: 'route', readonlySchema: true)]
 #[Column(type: 'primary', name: 'id')]
@@ -16,7 +18,18 @@ class Route
 {
     private int $id;
     private int $methodId;
-    private string $conditions;
+    private string $conditions = '{}';
+
+    #[HasMany(
+        target: Scenario::class,
+        innerKey: 'id',
+        outerKey: 'route_id'
+    )]
+    private ArrayCollection $scenarios;
+
+    public function __construct() {
+        $this->scenarios = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -41,5 +54,10 @@ class Route
     public function setConditions(string $conditions): void
     {
         $this->conditions = $conditions;
+    }
+
+    public function addScenario(Scenario $scenario): void
+    {
+        $this->scenarios->add($scenario);
     }
 }

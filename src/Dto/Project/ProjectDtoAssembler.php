@@ -25,7 +25,6 @@ final readonly class ProjectDtoAssembler
             $project->getId(),
             $project->getCode(),
             $project->getSecretKey(),
-            $project->getHash(),
             $project->isSandbox(),
             $methods->getIds(),
             array_map(fn (ProjectSetting $projectSetting) => [

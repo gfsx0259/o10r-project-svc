@@ -17,7 +17,6 @@ class OrmDefaultD4166f7bf4eba1a197d916fc329c5464 extends Migration
             ->addColumn('code', 'string')
             ->addColumn('user_id', 'string')
             ->addColumn('secret_key', 'string')
-            ->addColumn('hash', 'string')
             ->create();
     }
 

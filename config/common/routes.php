@@ -7,7 +7,6 @@ use App\Controller\Catalog\SchemaController;
 use App\Controller\Gateway\DummyController;
 use App\Controller\Gateway\ManageController;
 use App\Controller\IndexController;
-use App\Controller\Project\AggregationController;
 use App\Controller\Project\ProjectController;
 use App\Middleware\SessionMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
@@ -121,9 +120,6 @@ return [
 
     Route::post('/project/{projectId}/session')
         ->action([ProjectController::class, 'makeSession']),
-
-    Route::get('/aggregation/payment-page/{projectHash}')
-        ->action([AggregationController::class, 'paymentPage']),
 
     Route::get('/catalog/method')
         ->action([MethodController::class, 'read']),

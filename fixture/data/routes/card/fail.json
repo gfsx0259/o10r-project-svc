@@ -1,0 +1,6 @@
+{
+    "payment": {
+        "status": "failed",
+        "method_code": "{{METHOD_CODE}}"
+    }
+}

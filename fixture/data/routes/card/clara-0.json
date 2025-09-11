@@ -1,0 +1,26 @@
+{
+    "payment": {
+        "status": "awaiting clarification",
+        "method_code": "{{METHOD_CODE}}"
+    },
+    "clarification": [
+        {
+            "name": "first_name",
+            "type": "text",
+            "validation": {
+                "required": []
+            }
+        },
+        {
+            "name": "last_name",
+            "type": "text",
+            "validation": {
+                "required": []
+            }
+        },
+        {
+            "name": "email",
+            "type": "text"
+        }
+    ]
+}
