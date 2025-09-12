@@ -27,9 +27,9 @@ use OpenApi\Attributes\Schema;
 use OpenApi\Attributes\SecurityScheme;
 use OpenApi\Attributes\Tag;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Yiisoft\Http\Status;
+use Yiisoft\Input\Http\Attribute\Parameter\Request;
 use Yiisoft\RequestProvider\RequestProviderInterface;
 use Yiisoft\Router\HydratorAttribute\RouteArgument;
 use Yiisoft\Router\UrlGeneratorInterface;
@@ -114,6 +114,7 @@ class DummyController
         tags: ['gateway/dummy'],
         responses: [
             new OA\Response(response: '200', description: 'Success'),
+            new OA\Response(response: '400', description: 'Invalid token'),
             new OA\Response(response: '403', description: 'Forbidden'),
             new OA\Response(response: '404', description: 'Project not found'),
         ]
@@ -121,22 +122,22 @@ class DummyController
     #[Parameter(
         parameter: 'projectId',
         name: 'projectId',
-        description: 'Project Id',
+        description: 'Project id',
         in: 'path',
         required: true,
         schema: new Schema(type: 'integer'),
-        example: 11,
+        example: 1,
     )]
     public function access(
-        ServerRequestInterface $serverRequest,
         DataResponseFactoryInterface $responseFactory,
         ProjectRepository $projectRepository,
         #[RouteArgument('projectId')]
         int $projectId,
+        #[Request('token')]
+        string $actualSecretKey,
     ): ResponseInterface {
         $project = $projectRepository->getById($projectId);
 
-        $actualSecretKey = $serverRequest->getHeader('Authorization')[0] ?? '';
         $expectedSecretKey = $project->getSecretKey();
 
         return $actualSecretKey === $expectedSecretKey

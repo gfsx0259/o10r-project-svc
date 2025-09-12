@@ -8,6 +8,7 @@ use App\Controller\Gateway\DummyController;
 use App\Controller\Gateway\ManageController;
 use App\Controller\IndexController;
 use App\Controller\Project\ProjectController;
+use App\Middleware\AuthentificationMiddleware;
 use App\Middleware\SessionMiddleware;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsHtml;
 use Yiisoft\DataResponse\Middleware\FormatDataResponseAsJson;
@@ -23,6 +24,7 @@ return [
         ->name('app/index'),
 
     Route::post('/gateway/access/{projectId}')
+        ->middleware(AuthentificationMiddleware::class)
         ->action([DummyController::class, 'access']),
 
     Route::post('/gateway/payment')
