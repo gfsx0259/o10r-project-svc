@@ -400,7 +400,7 @@ final readonly class ProjectController
 
         if ($project) {
             $sid = $sessionService->makeSession(
-                $projectId,
+                $project,
                 $payload['paymentId'],
                 $payload['amount'],
                 $payload['currency'],
